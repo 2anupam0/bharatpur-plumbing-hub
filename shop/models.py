@@ -53,7 +53,7 @@ class Product(models.Model):
     )
     description = models.TextField()
     short_description = models.CharField(max_length=255, blank=True)
-    image = models.ImageField(upload_to="products/")
+    image = models.ImageField(upload_to="products/", blank=True)
     stock = models.PositiveIntegerField(default=0)
     is_active = models.BooleanField(default=True)
     is_featured = models.BooleanField(default=False)

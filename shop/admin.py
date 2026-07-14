@@ -24,20 +24,19 @@ class CategoryAdmin(admin.ModelAdmin):
             color, count,
         )
     get_product_count.short_description = "Products"
-    get_product_count.admin_order_field = "products__count"
 
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     list_display = [
         "image_preview", "name", "category_badge", "price",
-        "original_price", "stock_display", "is_featured", "is_active",
+        "is_featured", "is_active", "stock_display", "original_price",
     ]
     list_filter = [
         "category", "is_featured", "is_active",
         ("created_at", admin.DateFieldListFilter),
     ]
-    list_editable = ["price", "is_featured", "is_active"]
+    list_editable = ["is_featured", "is_active"]
     prepopulated_fields = {"slug": ("name",)}
     search_fields = ["name", "description", "brand"]
     list_per_page = 20
