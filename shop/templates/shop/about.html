@@ -1,0 +1,95 @@
+{% extends "shop/base.html" %}
+
+{% block title %}About Us{% endblock %}
+
+{% block content %}
+<div class="bg-white border-b border-gray-100">
+    <div class="max-w-7xl mx-auto px-4 py-4">
+        <nav class="text-sm text-gray-500">
+            <a href="{% url 'home' %}" class="hover:text-primary-600">Home</a>
+            <span class="mx-2">/</span>
+            <span class="text-gray-900 font-medium">About Us</span>
+        </nav>
+    </div>
+</div>
+
+<div class="max-w-4xl mx-auto px-4 py-12">
+    <h1 class="text-3xl font-bold text-gray-900 mb-2">About {{ site_name }}</h1>
+    <p class="text-gray-500 mb-10">Your trusted plumbing and hardware partner in Bharatpur since 2005.</p>
+
+    <div class="space-y-8">
+        <div class="bg-white rounded-2xl border border-gray-100 p-6 lg:p-8">
+            <h2 class="text-xl font-bold text-gray-900 mb-4">Our Story</h2>
+            <p class="text-gray-600 leading-relaxed mb-4">
+                {{ site_name }} was established in 2005 with a simple mission: to provide high-quality plumbing and hardware materials at fair prices to the people of Bharatpur and Chitwan.
+            </p>
+            <p class="text-gray-600 leading-relaxed mb-4">
+                Over the years, we have grown from a small shop to one of the most trusted names in plumbing supplies in the region. We stock products from top brands and ensure every item we sell meets quality standards.
+            </p>
+            <p class="text-gray-600 leading-relaxed">
+                Whether you are a homeowner fixing a leaky pipe, a plumber working on a big project, or a contractor building something new, we have the materials and expertise to help you get the job done right.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div class="bg-white rounded-2xl border border-gray-100 p-6 text-center">
+                <div class="text-3xl font-bold text-primary-600 mb-1">20+</div>
+                <p class="text-sm text-gray-500">Years in Business</p>
+            </div>
+            <div class="bg-white rounded-2xl border border-gray-100 p-6 text-center">
+                <div class="text-3xl font-bold text-primary-600 mb-1">5000+</div>
+                <p class="text-sm text-gray-500">Products Available</p>
+            </div>
+            <div class="bg-white rounded-2xl border border-gray-100 p-6 text-center">
+                <div class="text-3xl font-bold text-primary-600 mb-1">10,000+</div>
+                <p class="text-sm text-gray-500">Happy Customers</p>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-2xl border border-gray-100 p-6 lg:p-8">
+            <h2 class="text-xl font-bold text-gray-900 mb-4">What We Offer</h2>
+            <ul class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <li class="flex items-center gap-2 text-gray-600 text-sm">
+                    <i class="fas fa-check text-hardware-500"></i> PVC, CPVC, HDPE Pipes
+                </li>
+                <li class="flex items-center gap-2 text-gray-600 text-sm">
+                    <i class="fas fa-check text-hardware-500"></i> All Types of Fittings
+                </li>
+                <li class="flex items-center gap-2 text-gray-600 text-sm">
+                    <i class="fas fa-check text-hardware-500"></i> Kitchen & Bathroom Taps
+                </li>
+                <li class="flex items-center gap-2 text-gray-600 text-sm">
+                    <i class="fas fa-check text-hardware-500"></i> Shower Sets & Accessories
+                </li>
+                <li class="flex items-center gap-2 text-gray-600 text-sm">
+                    <i class="fas fa-check text-hardware-500"></i> Bathroom & Sanitary Ware
+                </li>
+                <li class="flex items-center gap-2 text-gray-600 text-sm">
+                    <i class="fas fa-check text-hardware-500"></i> Plumbing Tools
+                </li>
+                <li class="flex items-center gap-2 text-gray-600 text-sm">
+                    <i class="fas fa-check text-hardware-500"></i> Valves & Connectors
+                </li>
+                <li class="flex items-center gap-2 text-gray-600 text-sm">
+                    <i class="fas fa-check text-hardware-500"></i> Water Tanks
+                </li>
+            </ul>
+        </div>
+
+        <div class="bg-gradient-to-r from-primary-600 to-primary-700 rounded-2xl p-8 text-center text-white">
+            <h3 class="text-xl font-bold mb-2">Visit Our Shop Today</h3>
+            <p class="text-white/70 mb-6">{{ site_address }}</p>
+            <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                <a href="https://wa.me/{{ whatsapp_number|cut:'+' }}?text=Hello%2C%20I%20want%20to%20visit%20your%20shop" target="_blank" class="inline-flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white px-8 py-3 rounded-xl font-bold transition-colors">
+                    <i class="fab fa-whatsapp text-xl"></i>
+                    Get Directions via WhatsApp
+                </a>
+                <a href="{% url 'contact' %}" class="inline-flex items-center justify-center gap-2 bg-white text-primary-700 hover:bg-gray-100 px-8 py-3 rounded-xl font-bold transition-colors">
+                    <i class="fas fa-envelope"></i>
+                    Contact Us
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

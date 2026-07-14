@@ -1,0 +1,72 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block title %}Login | Plumbing Hub Admin{% endblock %}
+
+{% block extrahead %}
+    {{ block.super }}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'shop/admin/admin.css' %}">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔧</text></svg>">
+    <style>
+        body { background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%) !important; }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="login-page">
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <div class="login-logo">🔧</div>
+                <h1>Plumbing Hub</h1>
+                <p>Admin Panel &mdash; Bharatpur, Chitwan</p>
+            </div>
+
+            <div class="login-body">
+                {% if form.errors and not form.non_field_errors %}
+                <div class="login-errors">
+                    <i class="fas fa-exclamation-circle"></i>
+                    Please correct the errors below.
+                </div>
+                {% endif %}
+
+                {% if form.non_field_errors %}
+                {% for error in form.non_field_errors %}
+                <div class="login-errors">
+                    <i class="fas fa-exclamation-circle"></i>
+                    {{ error }}
+                </div>
+                {% endfor %}
+                {% endif %}
+
+                <form method="post" id="login-form">
+                    {% csrf_token %}
+                    <div class="form-row">
+                        <label for="id_username">
+                            <i class="fas fa-user"></i> Username
+                        </label>
+                        {{ form.username }}
+                    </div>
+                    <div class="form-row">
+                        <label for="id_password">
+                            <i class="fas fa-lock"></i> Password
+                        </label>
+                        {{ form.password }}
+                    </div>
+                    <div class="submit-row">
+                        <input type="submit" value="Sign In" class="btn-primary">
+                        <input type="hidden" name="next" value="{{ next }}">
+                    </div>
+                </form>
+            </div>
+
+            <div class="login-footer">
+                <a href="{% url 'home' %}" target="_blank"><i class="fas fa-arrow-left"></i> Back to Website</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

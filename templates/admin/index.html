@@ -1,0 +1,284 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static shop_admin_tags %}
+
+{% block title %}Dashboard | Plumbing Hub Admin{% endblock %}
+
+{% block admin_extra_css %}
+<style>
+    .content-wrapper { padding: 28px !important; }
+    #content { max-width: 1400px; margin: 0 auto; }
+    .app-list-section { margin-top: 32px; }
+    .app-list-section h2 {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--admin-text);
+        margin: 0 0 16px 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .app-list-section h2 .icon {
+        width: 32px;
+        height: 32px;
+        background: var(--admin-primary-light);
+        color: var(--admin-primary);
+        border-radius: 8px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+
+    {% get_admin_stats as stats %}
+    {% get_recent_products as recent_products %}
+    {% get_recent_inquiries as recent_inquiries %}
+    {% get_category_stats as category_stats %}
+
+    <div class="admin-stats-grid">
+        <div class="admin-stat-card stat-blue">
+            <div class="stat-icon"><i class="fas fa-box"></i></div>
+            <div class="stat-value">{{ stats.total_products }}</div>
+            <div class="stat-label">Total Products</div>
+            <a href="{% url 'admin:shop_product_changelist' %}" class="stat-link">Manage <i class="fas fa-arrow-right"></i></a>
+        </div>
+        <div class="admin-stat-card stat-green">
+            <div class="stat-icon"><i class="fas fa-tags"></i></div>
+            <div class="stat-value">{{ stats.total_categories }}</div>
+            <div class="stat-label">Categories</div>
+            <a href="{% url 'admin:shop_category_changelist' %}" class="stat-link">Manage <i class="fas fa-arrow-right"></i></a>
+        </div>
+        <div class="admin-stat-card stat-orange">
+            <div class="stat-icon"><i class="fas fa-star"></i></div>
+            <div class="stat-value">{{ stats.featured_products }}</div>
+            <div class="stat-label">Featured Products</div>
+            <a href="{% url 'admin:shop_product_changelist' %}?is_featured__exact=1" class="stat-link">View <i class="fas fa-arrow-right"></i></a>
+        </div>
+        <div class="admin-stat-card stat-cyan">
+            <div class="stat-icon"><i class="fas fa-envelope"></i></div>
+            <div class="stat-value">{{ stats.total_inquiries }}</div>
+            <div class="stat-label">Total Inquiries</div>
+            <a href="{% url 'admin:shop_contactinquiry_changelist' %}" class="stat-link">View <i class="fas fa-arrow-right"></i></a>
+        </div>
+        <div class="admin-stat-card stat-red">
+            <div class="stat-icon"><i class="fas fa-clock"></i></div>
+            <div class="stat-value">{{ stats.pending_inquiries }}</div>
+            <div class="stat-label">Pending Inquiries</div>
+            <a href="{% url 'admin:shop_contactinquiry_changelist' %}?is_resolved__exact=0" class="stat-link">View <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </div>
+
+    <div class="quick-actions">
+        <a href="{% url 'admin:shop_product_add' %}" class="quick-action-btn">
+            <i class="fas fa-plus"></i>
+            Add New Product
+        </a>
+        <a href="{% url 'admin:shop_category_add' %}" class="quick-action-btn action-green">
+            <i class="fas fa-folder-plus"></i>
+            Add Category
+        </a>
+        <a href="{% url 'admin:shop_contactinquiry_changelist' %}" class="quick-action-btn action-orange">
+            <i class="fas fa-envelope-open-text"></i>
+            View Inquiries
+        </a>
+        <a href="{% url 'admin:shop_sitesettings_changelist' %}" class="quick-action-btn action-cyan">
+            <i class="fas fa-cog"></i>
+            Site Settings
+        </a>
+        <a href="{% url 'home' %}" target="_blank" class="quick-action-btn action-red">
+            <i class="fas fa-external-link-alt"></i>
+            View Website
+        </a>
+    </div>
+
+    <div class="dashboard-card">
+        <h2><span class="icon"><i class="fas fa-box"></i></span> Recent Products</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th style="width:60px;"></th>
+                    <th>Product Name</th>
+                    <th>Category</th>
+                    <th>Price</th>
+                    <th>Stock</th>
+                    <th>Featured</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in recent_products %}
+                <tr>
+                    <td>
+                        {% if product.image %}
+                        <img src="{{ product.image.url }}" style="width:40px;height:40px;border-radius:8px;object-fit:cover;border:1px solid #e2e8f0;">
+                        {% else %}
+                        <div style="width:40px;height:40px;border-radius:8px;background:#f1f5f9;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:16px;border:1px solid #e2e8f0;">📦</div>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'admin:shop_product_change' product.pk %}" style="color:var(--admin-primary);font-weight:600;text-decoration:none;">{{ product.name|truncatechars:40 }}</a>
+                    </td>
+                    <td><span style="padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;background:#dbeafe;color:#1d4ed8;">{{ product.category.name }}</span></td>
+                    <td><strong>Rs {{ product.price|floatformat:0 }}</strong></td>
+                    <td>
+                        {% if product.stock > 10 %}
+                        <span class="stock-badge in-stock"><i class="fas fa-check-circle"></i> {{ product.stock }}</span>
+                        {% elif product.stock > 0 %}
+                        <span class="stock-badge low-stock"><i class="fas fa-exclamation-circle"></i> {{ product.stock }}</span>
+                        {% else %}
+                        <span class="stock-badge out-of-stock"><i class="fas fa-times-circle"></i> 0</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if product.is_featured %}
+                        <span style="color:#d97706;font-weight:600;"><i class="fas fa-star"></i> Yes</span>
+                        {% else %}
+                        <span style="color:#94a3b8;">No</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" style="text-align:center;padding:30px;color:#94a3b8;">
+                        No products yet. <a href="{% url 'admin:shop_product_add' %}">Add your first product</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="dashboard-card">
+        <h2><span class="icon" style="background:#fef3c7;color:#92400e;"><i class="fas fa-envelope"></i></span> Recent Inquiries</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Phone</th>
+                    <th>Type</th>
+                    <th>Message</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for inquiry in recent_inquiries %}
+                <tr>
+                    <td><strong>{{ inquiry.name }}</strong></td>
+                    <td><a href="tel:{{ inquiry.phone }}" style="color:var(--admin-primary);text-decoration:none;font-size:13px;">{{ inquiry.phone }}</a></td>
+                    <td>
+                        <span style="padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;
+                            {% if inquiry.inquiry_type == 'bulk' %}background:#fef3c7;color:#92400e;
+                            {% elif inquiry.inquiry_type == 'contractor' %}background:#cffafe;color:#164e63;
+                            {% elif inquiry.inquiry_type == 'delivery' %}background:#dcfce7;color:#166534;
+                            {% else %}background:#f1f5f9;color:#64748b;{% endif %}">
+                            {{ inquiry.get_inquiry_type_display }}
+                        </span>
+                    </td>
+                    <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#64748b;font-size:13px;">{{ inquiry.message|truncatechars:50 }}</td>
+                    <td style="white-space:nowrap;color:#64748b;font-size:12px;">{{ inquiry.created_at|date:"M d, Y" }}</td>
+                    <td>
+                        {% if inquiry.is_resolved %}
+                        <span class="stock-badge in-stock"><i class="fas fa-check"></i> Done</span>
+                        {% else %}
+                        <span class="stock-badge low-stock"><i class="fas fa-clock"></i> Pending</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" style="text-align:center;padding:30px;color:#94a3b8;">
+                        No inquiries yet. They will appear when customers submit the contact form.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+        <div class="dashboard-card">
+            <h2><span class="icon" style="background:#dcfce7;color:#16a34a;"><i class="fas fa-chart-pie"></i></span> Products by Category</h2>
+            {% for cat in category_stats %}
+            <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #f1f5f9;">
+                <span style="font-size:20px;">{{ cat.icon }}</span>
+                <div style="flex:1;">
+                    <div style="font-weight:600;font-size:13px;color:var(--admin-text);">{{ cat.name }}</div>
+                    <div style="margin-top:4px;height:6px;background:#f1f5f9;border-radius:3px;overflow:hidden;">
+                        <div style="height:100%;width:{% if stats.total_products %}{% widthratio cat.product_count stats.total_products 100 %}{% else %}0{% endif %}%;background:var(--admin-primary);border-radius:3px;min-width:2px;"></div>
+                    </div>
+                </div>
+                <span style="font-weight:700;font-size:14px;color:var(--admin-text);min-width:30px;text-align:right;">{{ cat.product_count }}</span>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="dashboard-card">
+            <h2><span class="icon" style="background:#cffafe;color:#0891b2;"><i class="fas fa-info-circle"></i></span> Quick Info</h2>
+            <div style="padding:4px 0;">
+                <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid #f1f5f9;">
+                    <span style="color:#64748b;font-size:13px;">Low Stock Items</span>
+                    <span style="font-weight:700;color:{% if stats.low_stock_count > 0 %}#d97706{% else %}#16a34a{% endif %};">{{ stats.low_stock_count }}</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid #f1f5f9;">
+                    <span style="color:#64748b;font-size:13px;">Out of Stock</span>
+                    <span style="font-weight:700;color:{% if stats.out_of_stock_count > 0 %}#dc2626{% else %}#16a34a{% endif %};">{{ stats.out_of_stock_count }}</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid #f1f5f9;">
+                    <span style="color:#64748b;font-size:13px;">Products with Discount</span>
+                    <span style="font-weight:700;color:var(--admin-primary);">{{ stats.discounted_products }}</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid #f1f5f9;">
+                    <span style="color:#64748b;font-size:13px;">Inactive Products</span>
+                    <span style="font-weight:700;color:#94a3b8;">{{ stats.inactive_products }}</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;padding:12px 0;">
+                    <span style="color:#64748b;font-size:13px;">WhatsApp</span>
+                    <span style="font-weight:700;color:#16a34a;font-size:12px;">{{ stats.whatsapp_number }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="app-list-section">
+        <h2><span class="icon"><i class="fas fa-layer-group"></i></span> Administration</h2>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(300px, 1fr));gap:16px;">
+            <div class="dashboard-card" style="margin-bottom:0;">
+                <h2 style="border-bottom-color:#dcfce7;"><span class="icon" style="background:#dcfce7;color:#16a34a;"><i class="fas fa-store"></i></span> Shop</h2>
+                <div style="padding:4px 0;">
+                    <a href="{% url 'admin:shop_category_changelist' %}" style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #f1f5f9;color:var(--admin-text);text-decoration:none;font-weight:500;font-size:13px;">
+                        <i class="fas fa-tags" style="color:var(--admin-primary);width:18px;"></i> Categories
+                        <span style="margin-left:auto;background:#dbeafe;color:#1d4ed8;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;">{{ stats.total_categories }}</span>
+                    </a>
+                    <a href="{% url 'admin:shop_product_changelist' %}" style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #f1f5f9;color:var(--admin-text);text-decoration:none;font-weight:500;font-size:13px;">
+                        <i class="fas fa-box" style="color:var(--admin-primary);width:18px;"></i> Products
+                        <span style="margin-left:auto;background:#dbeafe;color:#1d4ed8;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;">{{ stats.total_products }}</span>
+                    </a>
+                    <a href="{% url 'admin:shop_contactinquiry_changelist' %}" style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #f1f5f9;color:var(--admin-text);text-decoration:none;font-weight:500;font-size:13px;">
+                        <i class="fas fa-envelope" style="color:var(--admin-warning);width:18px;"></i> Contact Inquiries
+                        <span style="margin-left:auto;background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;">{{ stats.total_inquiries }}</span>
+                    </a>
+                    <a href="{% url 'admin:shop_sitesettings_changelist' %}" style="display:flex;align-items:center;gap:10px;padding:10px 0;color:var(--admin-text);text-decoration:none;font-weight:500;font-size:13px;">
+                        <i class="fas fa-cog" style="color:var(--admin-info);width:18px;"></i> Site Settings
+                    </a>
+                </div>
+            </div>
+            <div class="dashboard-card" style="margin-bottom:0;">
+                <h2 style="border-bottom-color:#fef3c7;"><span class="icon" style="background:#fef3c7;color:#92400e;"><i class="fas fa-shield-alt"></i></span> Authentication & Authorization</h2>
+                <div style="padding:4px 0;">
+                    <a href="{% url 'admin:auth_user_changelist' %}" style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #f1f5f9;color:var(--admin-text);text-decoration:none;font-weight:500;font-size:13px;">
+                        <i class="fas fa-users" style="color:var(--admin-primary);width:18px;"></i> Users
+                    </a>
+                    <a href="{% url 'admin:auth_group_changelist' %}" style="display:flex;align-items:center;gap:10px;padding:10px 0;color:var(--admin-text);text-decoration:none;font-weight:500;font-size:13px;">
+                        <i class="fas fa-user-shield" style="color:var(--admin-info);width:18px;"></i> Groups
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

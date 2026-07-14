@@ -1,0 +1,45 @@
+.line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+#whatsapp-float {
+    animation: pulse-green 2s infinite;
+}
+
+@keyframes pulse-green {
+    0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.5); }
+    70% { box-shadow: 0 0 0 12px rgba(34, 197, 94, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+}
+
+@media (max-width: 640px) {
+    #whatsapp-float {
+        width: 52px;
+        height: 52px;
+        bottom: 20px;
+        right: 20px;
+    }
+    #whatsapp-float i {
+        font-size: 1.25rem;
+    }
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+header {
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+#main-header {
+    transition: box-shadow 0.2s ease;
+}
+
+#main-header.scrolled {
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
