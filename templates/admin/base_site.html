@@ -25,7 +25,7 @@
     <div id="user-tools">
         <span>Hello, {{ user.get_short_name|default:user.username }}</span>
         {% if user.has_usable_password %}
-        <a href="{% url 'admin:password_change' %}"><i class="fas fa-key"></i> Change Password</a>
+        <a href="{% url 'admin:password_change' %}"><i class="fas fa-key"></i> Password</a>
         {% endif %}
         <a href="{% url 'admin:logout' %}" class="logout-link"><i class="fas fa-sign-out-alt"></i> Log out</a>
     </div>
@@ -41,7 +41,7 @@
 
 {% block footer %}
     <div id="footer">
-        <span>🔧 Bharatpur Plumbing Hub &mdash; Admin Panel</span> &nbsp;|&nbsp;
+        <span>Bharatpur Plumbing Hub &mdash; Admin Panel</span> &nbsp;|&nbsp;
         <a href="/" target="_blank"><i class="fas fa-external-link-alt"></i> View Website</a> &nbsp;|&nbsp;
         <a href="https://wa.me/" target="_blank"><i class="fab fa-whatsapp"></i> WhatsApp</a>
     </div>

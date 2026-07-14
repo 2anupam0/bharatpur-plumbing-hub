@@ -10,9 +10,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="{% static 'shop/admin/admin.css' %}">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔧</text></svg>">
-    <style>
-        body { background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%) !important; }
-    </style>
 {% endblock %}
 
 {% block content %}
@@ -21,15 +18,15 @@
         <div class="login-card">
             <div class="login-header">
                 <div class="login-logo">🔧</div>
-                <h1>Plumbing Hub</h1>
-                <p>Admin Panel &mdash; Bharatpur, Chitwan</p>
+                <h1>Bharatpur Plumbing Hub</h1>
+                <p>Admin Panel &mdash; Manage your shop</p>
             </div>
 
             <div class="login-body">
                 {% if form.errors and not form.non_field_errors %}
                 <div class="login-errors">
                     <i class="fas fa-exclamation-circle"></i>
-                    Please correct the errors below.
+                    <span>Invalid username or password. Please try again.</span>
                 </div>
                 {% endif %}
 
@@ -37,7 +34,7 @@
                 {% for error in form.non_field_errors %}
                 <div class="login-errors">
                     <i class="fas fa-exclamation-circle"></i>
-                    {{ error }}
+                    <span>{{ error }}</span>
                 </div>
                 {% endfor %}
                 {% endif %}
@@ -46,13 +43,13 @@
                     {% csrf_token %}
                     <div class="form-row">
                         <label for="id_username">
-                            <i class="fas fa-user"></i> Username
+                            <i class="fas fa-user" style="color:var(--a-text-muted);margin-right:4px;"></i> Username
                         </label>
                         {{ form.username }}
                     </div>
                     <div class="form-row">
                         <label for="id_password">
-                            <i class="fas fa-lock"></i> Password
+                            <i class="fas fa-lock" style="color:var(--a-text-muted);margin-right:4px;"></i> Password
                         </label>
                         {{ form.password }}
                     </div>
