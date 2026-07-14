@@ -6,92 +6,92 @@
 {% block content %}
 <div class="bg-white border-b border-gray-100">
     <div class="max-w-7xl mx-auto px-4 py-4">
-        <nav class="text-sm text-gray-500">
-            <a href="{% url 'home' %}" class="hover:text-primary-600">Home</a>
-            <span class="mx-2">/</span>
-            <span class="text-gray-900 font-medium">Delivery Information</span>
+        <nav class="breadcrumb">
+            <a href="{% url 'home' %}">Home</a>
+            <span class="separator">/</span>
+            <span class="current">Delivery Information</span>
         </nav>
     </div>
 </div>
 
 <div class="max-w-4xl mx-auto px-4 py-12">
-    <h1 class="text-3xl font-bold text-gray-900 mb-2">Delivery Information</h1>
-    <p class="text-gray-500 mb-10">Everything you need to know about our delivery service in Bharatpur and Chitwan.</p>
+    <h1 class="text-3xl font-extrabold text-gray-900 mb-2 tracking-tight">Delivery Information</h1>
+    <p class="text-gray-500 mb-10 text-[15px]">Everything you need to know about our delivery service in Bharatpur and Chitwan.</p>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
-        <div class="bg-white rounded-2xl border border-gray-100 p-6">
-            <div class="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center mb-4">
-                <i class="fas fa-check-circle text-hardware-600 text-xl"></i>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-10">
+        <div class="delivery-card">
+            <div class="delivery-icon" style="background: var(--green-light); color: var(--green);">
+                <i class="fas fa-check-circle"></i>
             </div>
-            <h3 class="font-bold text-gray-900 mb-2">Free Delivery</h3>
-            <p class="text-gray-500 text-sm">Free delivery on all orders above <strong>Rs {{ free_delivery_threshold|floatformat:0|intcomma }}</strong> within Bharatpur area.</p>
+            <h3>Free Delivery</h3>
+            <p>Free delivery on all orders above <strong>Rs {{ free_delivery_threshold|floatformat:0|intcomma }}</strong> within Bharatpur area.</p>
         </div>
-        <div class="bg-white rounded-2xl border border-gray-100 p-6">
-            <div class="w-12 h-12 bg-primary-50 rounded-xl flex items-center justify-center mb-4">
-                <i class="fas fa-truck text-primary-600 text-xl"></i>
+        <div class="delivery-card">
+            <div class="delivery-icon" style="background: var(--primary-light); color: var(--primary);">
+                <i class="fas fa-truck"></i>
             </div>
-            <h3 class="font-bold text-gray-900 mb-2">Standard Delivery</h3>
-            <p class="text-gray-500 text-sm">Orders below Rs {{ free_delivery_threshold|floatformat:0|intcomma }} have a delivery fee of <strong>Rs {{ delivery_fee|floatformat:0|intcomma }}</strong>.</p>
+            <h3>Standard Delivery</h3>
+            <p>Orders below Rs {{ free_delivery_threshold|floatformat:0|intcomma }} have a delivery fee of <strong>Rs {{ delivery_fee|floatformat:0|intcomma }}</strong>.</p>
         </div>
-        <div class="bg-white rounded-2xl border border-gray-100 p-6">
-            <div class="w-12 h-12 bg-amber-50 rounded-xl flex items-center justify-center mb-4">
-                <i class="fas fa-bolt text-amber-600 text-xl"></i>
+        <div class="delivery-card">
+            <div class="delivery-icon" style="background: var(--amber-light); color: var(--amber);">
+                <i class="fas fa-bolt"></i>
             </div>
-            <h3 class="font-bold text-gray-900 mb-2">Same-Day Delivery</h3>
-            <p class="text-gray-500 text-sm">Orders placed before 2 PM within Bharatpur are delivered the same day.</p>
+            <h3>Same-Day Delivery</h3>
+            <p>Orders placed before 2 PM within Bharatpur are delivered the same day.</p>
         </div>
-        <div class="bg-white rounded-2xl border border-gray-100 p-6">
-            <div class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center mb-4">
-                <i class="fas fa-map text-blue-600 text-xl"></i>
+        <div class="delivery-card">
+            <div class="delivery-icon" style="background: var(--primary-light); color: var(--primary);">
+                <i class="fas fa-map"></i>
             </div>
-            <h3 class="font-bold text-gray-900 mb-2">District-Wide</h3>
-            <p class="text-gray-500 text-sm">We deliver across Chitwan district. Delivery within 24-48 hours.</p>
+            <h3>District-Wide</h3>
+            <p>We deliver across Chitwan district. Delivery within 24-48 hours.</p>
         </div>
     </div>
 
-    <div class="bg-white rounded-2xl border border-gray-100 p-6 lg:p-8 mb-10">
-        <h2 class="text-xl font-bold text-gray-900 mb-4">How to Order</h2>
-        <div class="space-y-4">
-            <div class="flex items-start gap-4">
-                <div class="w-8 h-8 bg-primary-600 text-white rounded-full flex items-center justify-center shrink-0 text-sm font-bold">1</div>
+    <div class="card" style="padding:32px;margin-bottom:40px;">
+        <h2 class="text-xl font-extrabold text-gray-900 mb-6 tracking-tight">How to Order</h2>
+        <div class="space-y-0">
+            <div class="step-item">
+                <div class="step-number">1</div>
                 <div>
-                    <h4 class="font-semibold text-gray-900">Browse Products</h4>
-                    <p class="text-sm text-gray-500">Browse our catalog and find the plumbing materials you need.</p>
+                    <h4>Browse Products</h4>
+                    <p>Browse our catalog and find the plumbing materials you need.</p>
                 </div>
             </div>
-            <div class="flex items-start gap-4">
-                <div class="w-8 h-8 bg-primary-600 text-white rounded-full flex items-center justify-center shrink-0 text-sm font-bold">2</div>
+            <div class="step-item">
+                <div class="step-number">2</div>
                 <div>
-                    <h4 class="font-semibold text-gray-900">Contact via WhatsApp</h4>
-                    <p class="text-sm text-gray-500">Click "Order via WhatsApp" on any product to send us your order directly.</p>
+                    <h4>Contact via WhatsApp</h4>
+                    <p>Click "Order via WhatsApp" on any product to send us your order directly.</p>
                 </div>
             </div>
-            <div class="flex items-start gap-4">
-                <div class="w-8 h-8 bg-primary-600 text-white rounded-full flex items-center justify-center shrink-0 text-sm font-bold">3</div>
+            <div class="step-item">
+                <div class="step-number">3</div>
                 <div>
-                    <h4 class="font-semibold text-gray-900">Confirm & Pay</h4>
-                    <p class="text-sm text-gray-500">We confirm your order and total amount. Pay on delivery or via bank transfer.</p>
+                    <h4>Confirm & Pay</h4>
+                    <p>We confirm your order and total amount. Pay on delivery or via bank transfer.</p>
                 </div>
             </div>
-            <div class="flex items-start gap-4">
-                <div class="w-8 h-8 bg-primary-600 text-white rounded-full flex items-center justify-center shrink-0 text-sm font-bold">4</div>
+            <div class="step-item">
+                <div class="step-number">4</div>
                 <div>
-                    <h4 class="font-semibold text-gray-900">Receive Your Order</h4>
-                    <p class="text-sm text-gray-500">Same-day delivery for Bharatpur. Next-day for rest of Chitwan.</p>
+                    <h4>Receive Your Order</h4>
+                    <p>Same-day delivery for Bharatpur. Next-day for rest of Chitwan.</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="bg-gradient-to-r from-primary-600 to-primary-700 rounded-2xl p-8 text-center text-white">
-        <h3 class="text-xl font-bold mb-2">Ready to Order?</h3>
-        <p class="text-white/70 mb-6">Send us a WhatsApp message or call us to place your order.</p>
-        <div class="flex flex-col sm:flex-row gap-3 justify-center">
-            <a href="https://wa.me/{{ whatsapp_number|cut:'+' }}?text=Hello%2C%20I%20want%20to%20order%20plumbing%20materials" target="_blank" class="inline-flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white px-8 py-3 rounded-xl font-bold transition-colors">
+    <div class="offer-banner p-8 text-center text-white relative z-10">
+        <h3 class="text-xl font-extrabold mb-2">Ready to Order?</h3>
+        <p class="text-white/60 mb-6 text-[15px]">Send us a WhatsApp message or call us to place your order.</p>
+        <div class="flex flex-col sm:flex-row gap-3 justify-center relative z-10">
+            <a href="https://wa.me/{{ whatsapp_number|cut:'+' }}?text=Hello%2C%20I%20want%20to%20order%20plumbing%20materials" target="_blank" class="btn btn-lg" style="background:#25d366;color:#fff;">
                 <i class="fab fa-whatsapp text-xl"></i>
                 Order on WhatsApp
             </a>
-            <a href="tel:{{ site_phone|cut:' '|cut:'-' }}" class="inline-flex items-center justify-center gap-2 bg-white text-primary-700 hover:bg-gray-100 px-8 py-3 rounded-xl font-bold transition-colors">
+            <a href="tel:{{ site_phone|cut:' '|cut:'-' }}" class="btn btn-white btn-lg">
                 <i class="fas fa-phone"></i>
                 Call Now
             </a>

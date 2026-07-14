@@ -5,10 +5,10 @@
 {% block content %}
 <div class="bg-white border-b border-gray-100">
     <div class="max-w-7xl mx-auto px-4 py-4">
-        <nav class="text-sm text-gray-500">
-            <a href="{% url 'home' %}" class="hover:text-primary-600">Home</a>
-            <span class="mx-2">/</span>
-            <span class="text-gray-900 font-medium">Contact Us</span>
+        <nav class="breadcrumb">
+            <a href="{% url 'home' %}">Home</a>
+            <span class="separator">/</span>
+            <span class="current">Contact Us</span>
         </nav>
     </div>
 </div>
@@ -16,94 +16,92 @@
 <div class="max-w-7xl mx-auto px-4 py-12">
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div class="lg:col-span-2">
-            <div class="bg-white rounded-2xl border border-gray-100 p-6 lg:p-8">
-                <h1 class="text-2xl font-bold text-gray-900 mb-2">Send Us an Inquiry</h1>
-                <p class="text-gray-500 mb-8">Fill out the form below and we will get back to you shortly. For urgent orders, use WhatsApp.</p>
+            <div class="card" style="padding:32px;">
+                <h1 class="text-2xl font-extrabold text-gray-900 mb-2 tracking-tight">Send Us an Inquiry</h1>
+                <p class="text-gray-500 mb-8 text-sm">Fill out the form below and we will get back to you shortly. For urgent orders, use WhatsApp.</p>
 
                 <form method="post" class="space-y-5">
                     {% csrf_token %}
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1.5">Full Name *</label>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1.5">Full Name *</label>
                             {{ form.name }}
                             {% if form.name.errors %}<p class="text-red-500 text-xs mt-1">{{ form.name.errors.0 }}</p>{% endif %}
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1.5">Phone Number *</label>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1.5">Phone Number *</label>
                             {{ form.phone }}
                             {% if form.phone.errors %}<p class="text-red-500 text-xs mt-1">{{ form.phone.errors.0 }}</p>{% endif %}
                         </div>
                     </div>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1.5">Email (Optional)</label>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1.5">Email (Optional)</label>
                             {{ form.email }}
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1.5">Inquiry Type</label>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1.5">Inquiry Type</label>
                             {{ form.inquiry_type }}
                         </div>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Message *</label>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">Message *</label>
                         {{ form.message }}
                         {% if form.message.errors %}<p class="text-red-500 text-xs mt-1">{{ form.message.errors.0 }}</p>{% endif %}
                     </div>
                     {{ form.website }}
-                    <button type="submit" class="w-full bg-primary-600 hover:bg-primary-700 text-white px-8 py-3.5 rounded-xl font-bold text-base transition-colors">
-                        <i class="fas fa-paper-plane mr-2"></i>Submit Inquiry
+                    <button type="submit" class="btn btn-primary btn-lg w-full" style="justify-content:center;">
+                        <i class="fas fa-paper-plane"></i> Submit Inquiry
                     </button>
                 </form>
             </div>
         </div>
 
         <div class="space-y-4">
-            <div class="bg-white rounded-2xl border border-gray-100 p-6">
-                <h3 class="font-bold text-gray-900 mb-4">Contact Information</h3>
-                <ul class="space-y-4">
-                    <li class="flex items-start gap-3">
-                        <div class="w-10 h-10 bg-primary-50 rounded-lg flex items-center justify-center shrink-0">
-                            <i class="fas fa-map-marker-alt text-primary-600"></i>
-                        </div>
-                        <div>
-                            <p class="font-medium text-gray-900 text-sm">Address</p>
-                            <p class="text-gray-500 text-sm">{{ site_address }}</p>
-                        </div>
-                    </li>
-                    <li class="flex items-start gap-3">
-                        <div class="w-10 h-10 bg-primary-50 rounded-lg flex items-center justify-center shrink-0">
-                            <i class="fas fa-phone text-primary-600"></i>
-                        </div>
-                        <div>
-                            <p class="font-medium text-gray-900 text-sm">Phone</p>
-                            <a href="tel:{{ site_phone }}" class="text-primary-600 text-sm hover:underline">{{ site_phone }}</a>
-                        </div>
-                    </li>
-                    <li class="flex items-start gap-3">
-                        <div class="w-10 h-10 bg-green-50 rounded-lg flex items-center justify-center shrink-0">
-                            <i class="fab fa-whatsapp text-green-600"></i>
-                        </div>
-                        <div>
-                            <p class="font-medium text-gray-900 text-sm">WhatsApp</p>
-                            <a href="https://wa.me/{{ whatsapp_number|cut:'+' }}" target="_blank" class="text-green-600 text-sm hover:underline">Chat with us</a>
-                        </div>
-                    </li>
-                    <li class="flex items-start gap-3">
-                        <div class="w-10 h-10 bg-primary-50 rounded-lg flex items-center justify-center shrink-0">
-                            <i class="fas fa-clock text-primary-600"></i>
-                        </div>
-                        <div>
-                            <p class="font-medium text-gray-900 text-sm">Opening Hours</p>
-                            <p class="text-gray-500 text-sm">{{ site_opening_hours }}</p>
-                        </div>
-                    </li>
-                </ul>
+            <div class="contact-info-card">
+                <h3 class="font-bold text-gray-900 mb-4 text-[15px]">Contact Information</h3>
+                <div class="contact-info-item">
+                    <div class="info-icon" style="background: var(--primary-light); color: var(--primary);">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <div>
+                        <p class="info-label">Address</p>
+                        <p class="info-value">{{ site_address }}</p>
+                    </div>
+                </div>
+                <div class="contact-info-item">
+                    <div class="info-icon" style="background: var(--primary-light); color: var(--primary);">
+                        <i class="fas fa-phone"></i>
+                    </div>
+                    <div>
+                        <p class="info-label">Phone</p>
+                        <p class="info-value"><a href="tel:{{ site_phone }}">{{ site_phone }}</a></p>
+                    </div>
+                </div>
+                <div class="contact-info-item">
+                    <div class="info-icon" style="background: var(--green-light); color: var(--green);">
+                        <i class="fab fa-whatsapp"></i>
+                    </div>
+                    <div>
+                        <p class="info-label">WhatsApp</p>
+                        <p class="info-value"><a href="https://wa.me/{{ whatsapp_number|cut:'+' }}" target="_blank">Chat with us</a></p>
+                    </div>
+                </div>
+                <div class="contact-info-item">
+                    <div class="info-icon" style="background: var(--primary-light); color: var(--primary);">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div>
+                        <p class="info-label">Opening Hours</p>
+                        <p class="info-value">{{ site_opening_hours }}</p>
+                    </div>
+                </div>
             </div>
 
-            <div class="bg-white rounded-2xl border border-gray-100 p-6">
-                <h3 class="font-bold text-gray-900 mb-3">Quick WhatsApp</h3>
+            <div class="contact-info-card">
+                <h3 class="font-bold text-gray-900 mb-3 text-[15px]">Quick WhatsApp</h3>
                 <p class="text-gray-500 text-sm mb-4">Need a quick reply? Send us a message directly on WhatsApp.</p>
-                <a href="https://wa.me/{{ whatsapp_number|cut:'+' }}?text=Hello%2C%20I%20need%20plumbing%20materials" target="_blank" class="flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white py-3 rounded-xl font-bold transition-colors w-full">
+                <a href="https://wa.me/{{ whatsapp_number|cut:'+' }}?text=Hello%2C%20I%20need%20plumbing%20materials" target="_blank" class="btn btn-lg w-full" style="background:#25d366;color:#fff;justify-content:center;">
                     <i class="fab fa-whatsapp text-lg"></i>
                     Open WhatsApp
                 </a>
