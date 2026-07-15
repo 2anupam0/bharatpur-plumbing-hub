@@ -128,6 +128,10 @@ class SiteSettings(models.Model):
     delivery_fee = models.DecimalField(
         max_digits=10, decimal_places=2, default=150.00
     )
+    tax_percent = models.DecimalField(
+        max_digits=5, decimal_places=2, default=13.00,
+        help_text="Tax percentage (e.g. 13 for Nepal VAT)"
+    )
     announcement_text = models.CharField(
         max_length=255, blank=True,
         help_text="Announcement bar text (leave empty to hide)"
