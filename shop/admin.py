@@ -307,6 +307,10 @@ class SiteSettingsAdmin(admin.ModelAdmin):
             "description": "Configure delivery fees and free delivery thresholds.",
             "fields": ("free_delivery_threshold", "delivery_fee"),
         }),
+        ("Tax Settings", {
+            "description": "Configure tax percentage applied to orders.",
+            "fields": ("tax_percent",),
+        }),
         ("Announcements", {
             "description": "Set an announcement message shown on the website header. Leave empty to hide.",
             "fields": ("announcement_text",),
