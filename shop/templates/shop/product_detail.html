@@ -1,20 +1,20 @@
 {% extends "shop/base.html" %}
-{% load humanize %}
+{% load static humanize %}
 
 {% block title %}{{ product.name }}{% endblock %}
 {% block meta_description %}{{ product.short_description|default:product.description|truncatewords:30 }} - {{ product.name }} at {{ site_name }}, Bharatpur{% endblock %}
 
 {% block content %}
-<div class="bg-white border-b border-gray-100">
-    <div class="max-w-7xl mx-auto px-4 py-4">
-        <nav class="breadcrumb">
-            <a href="{% url 'home' %}">Home</a>
-            <span class="separator">/</span>
-            <a href="{% url 'product_list' %}">Products</a>
-            <span class="separator">/</span>
-            <a href="{% url 'product_list' %}?category={{ product.category.slug }}">{{ product.category.name }}</a>
-            <span class="separator">/</span>
-            <span class="current">{{ product.name }}</span>
+<div class="products-header-bg" style="background-image: url('/static/shop/images/products-bg.jpg');">
+    <div class="max-w-7xl mx-auto px-4 py-8 relative z-10">
+        <nav class="breadcrumb" style="color:rgba(255,255,255,0.7);">
+            <a href="{% url 'home' %}" style="color:rgba(255,255,255,0.85);">Home</a>
+            <span class="separator" style="color:rgba(255,255,255,0.4);">/</span>
+            <a href="{% url 'product_list' %}" style="color:rgba(255,255,255,0.85);">Products</a>
+            <span class="separator" style="color:rgba(255,255,255,0.4);">/</span>
+            <a href="{% url 'product_list' %}?category={{ product.category.slug }}" style="color:rgba(255,255,255,0.85);">{{ product.category.name }}</a>
+            <span class="separator" style="color:rgba(255,255,255,0.4);">/</span>
+            <span class="current" style="color:#fff;">{{ product.name }}</span>
         </nav>
     </div>
 </div>

@@ -1,15 +1,10 @@
 {% extends "shop/base.html" %}
-{% load humanize %}
+{% load static humanize %}
 
 {% block title %}Home{% endblock %}
 
 {% block content %}
-<section class="relative overflow-hidden" style="background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 30%, #2563eb 60%, #1d4ed8 100%);">
-    <div class="absolute inset-0">
-        <div class="absolute top-0 left-1/4 w-96 h-96 bg-white/5 rounded-full blur-3xl"></div>
-        <div class="absolute bottom-0 right-1/4 w-80 h-80 bg-hardware-400/10 rounded-full blur-3xl"></div>
-        <div class="absolute top-1/2 left-0 w-64 h-64 bg-white/3 rounded-full blur-3xl"></div>
-    </div>
+<section class="hero-bg relative overflow-hidden" style="background-image: url('/static/shop/images/hero-bg.jpg');">
     <div class="max-w-7xl mx-auto px-4 py-16 md:py-20 lg:py-28 relative z-10">
         <div class="max-w-3xl">
             <span class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm text-white/90 px-4 py-1.5 rounded-full text-xs font-semibold mb-6 border border-white/10">

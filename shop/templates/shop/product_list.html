@@ -1,18 +1,18 @@
 {% extends "shop/base.html" %}
-{% load humanize %}
+{% load static humanize %}
 
 {% block title %}Products{% endblock %}
 
 {% block content %}
-<div class="bg-white border-b border-gray-100">
-    <div class="max-w-7xl mx-auto px-4 py-4">
-        <nav class="breadcrumb">
-            <a href="{% url 'home' %}">Home</a>
-            <span class="separator">/</span>
-            <span class="current">Products</span>
+<div class="products-header-bg" style="background-image: url('/static/shop/images/products-bg.jpg');">
+    <div class="max-w-7xl mx-auto px-4 py-8 relative z-10">
+        <nav class="breadcrumb" style="color:rgba(255,255,255,0.7);">
+            <a href="{% url 'home' %}" style="color:rgba(255,255,255,0.85);">Home</a>
+            <span class="separator" style="color:rgba(255,255,255,0.4);">/</span>
+            <span class="current" style="color:#fff;">Products</span>
             {% if current_category %}
-            <span class="separator">/</span>
-            <span class="current">{{ current_category.name }}</span>
+            <span class="separator" style="color:rgba(255,255,255,0.4);">/</span>
+            <span class="current" style="color:#fff;">{{ current_category.name }}</span>
             {% endif %}
         </nav>
     </div>
