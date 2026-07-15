@@ -61,12 +61,19 @@
                 <nav class="hidden lg:flex items-center gap-0.5">
                     <a href="{% url 'home' %}" class="nav-link px-4 py-2 rounded-lg text-[13px] font-semibold text-gray-600 hover:bg-primary-50 hover:text-primary-700 transition-all duration-200">Home</a>
                     <a href="{% url 'product_list' %}" class="nav-link px-4 py-2 rounded-lg text-[13px] font-semibold text-gray-600 hover:bg-primary-50 hover:text-primary-700 transition-all duration-200">Products</a>
+                    <a href="{% url 'cart_page' %}" class="nav-link px-4 py-2 rounded-lg text-[13px] font-semibold text-gray-600 hover:bg-primary-50 hover:text-primary-700 transition-all duration-200">
+                        {% if cart_count %}<span class="w-2 h-2 bg-red-500 rounded-full inline-block mr-1"></span>{% endif %}Cart
+                    </a>
                     <a href="{% url 'delivery_info' %}" class="nav-link px-4 py-2 rounded-lg text-[13px] font-semibold text-gray-600 hover:bg-primary-50 hover:text-primary-700 transition-all duration-200">Delivery</a>
                     <a href="{% url 'about' %}" class="nav-link px-4 py-2 rounded-lg text-[13px] font-semibold text-gray-600 hover:bg-primary-50 hover:text-primary-700 transition-all duration-200">About</a>
                     <a href="{% url 'contact' %}" class="nav-link px-4 py-2 rounded-lg text-[13px] font-semibold text-gray-600 hover:bg-primary-50 hover:text-primary-700 transition-all duration-200">Contact</a>
                 </nav>
 
                 <div class="flex items-center gap-2.5">
+                    <a href="{% url 'cart_page' %}" class="relative flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold text-gray-600 hover:bg-primary-50 hover:text-primary-700 transition-all">
+                        <i class="fas fa-shopping-cart text-base"></i>
+                        {% if cart_count %}<span class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">{{ cart_count }}</span>{% endif %}
+                    </a>
                     <a href="https://wa.me/{{ whatsapp_number|cut:'+' }}?text=Hello%2C%20I%20need%20plumbing%20materials" target="_blank" class="hidden sm:flex items-center gap-2 bg-hardware-500 hover:bg-hardware-600 text-white px-4 py-2 rounded-lg text-[13px] font-semibold transition-all duration-200 shadow-sm hover:shadow-md">
                         <i class="fab fa-whatsapp text-sm"></i>
                         <span>WhatsApp</span>
@@ -82,6 +89,9 @@
             <div class="max-w-7xl mx-auto px-4 py-3 space-y-1">
                 <a href="{% url 'home' %}" class="block px-4 py-2.5 rounded-lg text-[14px] font-semibold text-gray-700 hover:bg-primary-50 hover:text-primary-700 transition-colors">Home</a>
                 <a href="{% url 'product_list' %}" class="block px-4 py-2.5 rounded-lg text-[14px] font-semibold text-gray-700 hover:bg-primary-50 hover:text-primary-700 transition-colors">Products</a>
+                <a href="{% url 'cart_page' %}" class="block px-4 py-2.5 rounded-lg text-[14px] font-semibold text-gray-700 hover:bg-primary-50 hover:text-primary-700 transition-colors">
+                    <i class="fas fa-shopping-cart mr-2"></i>Cart {% if cart_count %}({{ cart_count }}){% endif %}
+                </a>
                 <a href="{% url 'delivery_info' %}" class="block px-4 py-2.5 rounded-lg text-[14px] font-semibold text-gray-700 hover:bg-primary-50 hover:text-primary-700 transition-colors">Delivery Info</a>
                 <a href="{% url 'about' %}" class="block px-4 py-2.5 rounded-lg text-[14px] font-semibold text-gray-700 hover:bg-primary-50 hover:text-primary-700 transition-colors">About Us</a>
                 <a href="{% url 'contact' %}" class="block px-4 py-2.5 rounded-lg text-[14px] font-semibold text-gray-700 hover:bg-primary-50 hover:text-primary-700 transition-colors">Contact</a>

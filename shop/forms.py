@@ -1,6 +1,6 @@
 import re
 from django import forms
-from .models import ContactInquiry
+from .models import ContactInquiry, Order
 
 
 class ContactForm(forms.ModelForm):
@@ -43,6 +43,58 @@ class ContactForm(forms.ModelForm):
 
     def clean_phone(self):
         phone = self.cleaned_data.get("phone", "")
+        cleaned = re.sub(r"[\s\-\(\)]", "", phone)
+        if not re.match(r"^\+?\d{7,15}$", cleaned):
+            raise forms.ValidationError("Enter a valid phone number.")
+        return cleaned
+
+
+class CheckoutForm(forms.Form):
+    customer_name = forms.CharField(
+        max_length=100,
+        widget=forms.TextInput(attrs={
+            "class": "form-input",
+            "placeholder": "Full name",
+        }),
+    )
+    customer_phone = forms.CharField(
+        max_length=20,
+        widget=forms.TextInput(attrs={
+            "class": "form-input",
+            "placeholder": "+977 98XXXXXXXX",
+        }),
+    )
+    customer_email = forms.EmailField(
+        required=False,
+        widget=forms.EmailInput(attrs={
+            "class": "form-input",
+            "placeholder": "Email (optional)",
+        }),
+    )
+    customer_address = forms.CharField(
+        widget=forms.Textarea(attrs={
+            "class": "form-input",
+            "rows": 2,
+            "placeholder": "Delivery address",
+        }),
+    )
+    payment_method = forms.ChoiceField(
+        choices=Order.PAYMENT_METHOD_CHOICES,
+        widget=forms.Select(attrs={
+            "class": "form-input",
+        }),
+    )
+    notes = forms.CharField(
+        required=False,
+        widget=forms.Textarea(attrs={
+            "class": "form-input",
+            "rows": 2,
+            "placeholder": "Order notes (optional)",
+        }),
+    )
+
+    def clean_customer_phone(self):
+        phone = self.cleaned_data.get("customer_phone", "")
         cleaned = re.sub(r"[\s\-\(\)]", "", phone)
         if not re.match(r"^\+?\d{7,15}$", cleaned):
             raise forms.ValidationError("Enter a valid phone number.")

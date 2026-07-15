@@ -76,7 +76,18 @@
 
                 <div class="mt-auto space-y-3">
                     {% if product.is_in_stock %}
-                    <a href="https://wa.me/{{ whatsapp_number|cut:'+' }}?text=Hello%2C%20I%20want%20to%20order%20{{ product.name|urlencode }}%20(Rs%20{{ product.price|floatformat:0 }}%20per%20{{ product.unit }}).%20Please%20share%20delivery%20details." target="_blank" class="btn btn-lg w-full" style="background:#25d366;color:#fff;justify-content:center;">
+                    <form method="post" action="{% url 'cart_add' product.pk %}" class="flex gap-2">
+                        {% csrf_token %}
+                        <div class="flex items-center border border-gray-200 rounded-lg overflow-hidden">
+                            <button type="button" onclick="this.nextElementSibling.value=parseInt(this.nextElementSibling.value)-1;if(this.nextElementSibling.value<1)this.nextElementSibling.value=1;" class="px-3 py-3 text-gray-500 hover:bg-gray-50 font-bold text-sm">-</button>
+                            <input type="number" name="quantity" value="1" min="1" max="{{ product.stock }}" class="w-14 text-center border-0 text-sm font-bold outline-none" style="appearance:none;">
+                            <button type="button" onclick="var inp=this.previousElementSibling;inp.value=parseInt(inp.value)+1;" class="px-3 py-3 text-gray-500 hover:bg-gray-50 font-bold text-sm">+</button>
+                        </div>
+                        <button type="submit" class="btn btn-lg flex-1" style="background:#25d366;color:#fff;justify-content:center;">
+                            <i class="fas fa-cart-plus"></i> Add to Cart
+                        </button>
+                    </form>
+                    <a href="https://wa.me/{{ whatsapp_number|cut:'+' }}?text=Hello%2C%20I%20want%20to%20order%20{{ product.name|urlencode }}%20(Rs%20{{ product.price|floatformat:0 }}%20per%20{{ product.unit }}).%20Please%20share%20delivery%20details." target="_blank" class="btn btn-lg w-full" style="background:#25d366;color:#fff;justify-content:center;opacity:0.85;">
                         <i class="fab fa-whatsapp text-xl"></i>
                         Order via WhatsApp
                     </a>

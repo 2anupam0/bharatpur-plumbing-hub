@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.utils.html import format_html, mark_safe
 from django.urls import reverse
-from .models import Category, Product, ContactInquiry, SiteSettings
+from .models import Category, Product, ContactInquiry, SiteSettings, Order, OrderItem
 
 
 @admin.register(Category)
@@ -170,6 +170,129 @@ class ContactInquiryAdmin(admin.ModelAdmin):
             '<span class="stock-badge low-stock"><i class="fas fa-clock"></i> Pending</span>',
         )
     status_badge.short_description = "Status"
+
+
+class OrderItemInline(admin.TabularInline):
+    model = OrderItem
+    extra = 0
+    readonly_fields = ["product", "product_name", "quantity", "unit_price", "total_price"]
+    fields = ["product_name", "quantity", "unit_price", "total_price"]
+
+    def has_add_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+
+@admin.register(Order)
+class OrderAdmin(admin.ModelAdmin):
+    list_display = [
+        "order_number", "customer_name", "customer_phone",
+        "grand_total_display", "payment_status_badge",
+        "order_status_badge", "source_badge", "created_at",
+    ]
+    list_filter = [
+        "order_status", "payment_status", "source",
+        "payment_method", "created_at",
+    ]
+    search_fields = ["order_number", "customer_name", "customer_phone"]
+    readonly_fields = [
+        "order_number", "subtotal", "tax_amount", "grand_total",
+        "created_at", "updated_at", "created_by",
+    ]
+    list_per_page = 25
+    date_hierarchy = "created_at"
+    inlines = [OrderItemInline]
+    save_on_top = True
+
+    fieldsets = (
+        ("Order Info", {
+            "fields": ("order_number", "source", "created_by", "created_at"),
+        }),
+        ("Customer", {
+            "fields": ("customer_name", "customer_phone", "customer_email", "customer_address"),
+        }),
+        ("Pricing", {
+            "fields": ("subtotal", "discount_amount", "tax_percent", "tax_amount", "delivery_fee", "grand_total"),
+        }),
+        ("Payment", {
+            "fields": ("payment_method", "payment_status"),
+        }),
+        ("Status & Notes", {
+            "fields": ("order_status", "notes"),
+        }),
+        ("Timestamps", {
+            "classes": ("collapse",),
+            "fields": ("updated_at",),
+        }),
+    )
+
+    actions = ["mark_confirmed", "mark_delivered", "mark_paid"]
+
+    def grand_total_display(self, obj):
+        return format_html('<strong>Rs {:.0f}</strong>', obj.grand_total)
+    grand_total_display.short_description = "Total"
+
+    def payment_status_badge(self, obj):
+        colors = {
+            "pending": ("#fef3c7", "#92400e"),
+            "paid": ("#dcfce7", "#166534"),
+            "partially_paid": ("#cffafe", "#164e63"),
+            "cancelled": ("#fee2e2", "#991b1b"),
+        }
+        bg, fg = colors.get(obj.payment_status, ("#f1f5f9", "#64748b"))
+        return format_html(
+            '<span style="padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;background:{};color:{};">{}</span>',
+            bg, fg, obj.get_payment_status_display(),
+        )
+    payment_status_badge.short_description = "Payment"
+
+    def order_status_badge(self, obj):
+        colors = {
+            "pending": ("#fef3c7", "#92400e"),
+            "confirmed": ("#dbeafe", "#1d4ed8"),
+            "processing": ("#cffafe", "#164e63"),
+            "shipped": ("#e0e7ff", "#3730a3"),
+            "delivered": ("#dcfce7", "#166534"),
+            "cancelled": ("#fee2e2", "#991b1b"),
+        }
+        bg, fg = colors.get(obj.order_status, ("#f1f5f9", "#64748b"))
+        return format_html(
+            '<span style="padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;background:{};color:{};">{}</span>',
+            bg, fg, obj.get_order_status_display(),
+        )
+    order_status_badge.short_description = "Status"
+
+    def source_badge(self, obj):
+        colors = {
+            "website": ("#dbeafe", "#1d4ed8"),
+            "manual": ("#dcfce7", "#166534"),
+            "phone": ("#fef3c7", "#92400e"),
+        }
+        bg, fg = colors.get(obj.source, ("#f1f5f9", "#64748b"))
+        return format_html(
+            '<span style="padding:3px 8px;border-radius:20px;font-size:10px;font-weight:600;background:{};color:{};">{}</span>',
+            bg, fg, obj.get_source_display(),
+        )
+    source_badge.short_description = "Source"
+
+    def mark_confirmed(self, request, queryset):
+        queryset.update(order_status="confirmed")
+    mark_confirmed.short_description = "Mark as Confirmed"
+
+    def mark_delivered(self, request, queryset):
+        queryset.update(order_status="delivered")
+    mark_delivered.short_description = "Mark as Delivered"
+
+    def mark_paid(self, request, queryset):
+        queryset.update(payment_status="paid")
+    mark_paid.short_description = "Mark as Paid"
+
+    def save_model(self, request, obj, form, change):
+        if not change and not obj.created_by:
+            obj.created_by = request.user
+        super().save_model(request, obj, form, change)
 
 
 @admin.register(SiteSettings)

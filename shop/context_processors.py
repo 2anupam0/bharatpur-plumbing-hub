@@ -10,6 +10,12 @@ def site_context(request):
     if _site_settings_cache is None:
         _site_settings_cache = SiteSettings.load()
     site_settings = _site_settings_cache
+
+    cart_count = 0
+    cart = request.session.get("cart")
+    if cart:
+        cart_count = sum(item["quantity"] for item in cart.values())
+
     return {
         "site_name": getattr(settings, "SITE_NAME", "Bharatpur Plumbing Hub"),
         "site_tagline": getattr(settings, "SITE_TAGLINE", "All Plumbing & Hardware Materials"),
@@ -20,4 +26,5 @@ def site_context(request):
         "whatsapp_number": site_settings.whatsapp_number,
         "free_delivery_threshold": site_settings.free_delivery_threshold,
         "announcement_text": site_settings.announcement_text,
+        "cart_count": cart_count,
     }

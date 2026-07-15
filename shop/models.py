@@ -1,4 +1,6 @@
+import uuid
 from django.db import models
+from django.contrib.auth.models import User
 from django.utils.text import slugify
 
 
@@ -146,3 +148,92 @@ class SiteSettings(models.Model):
     def load(cls):
         obj, _ = cls.objects.get_or_create(pk=1)
         return obj
+
+
+class Order(models.Model):
+    STATUS_CHOICES = [
+        ("pending", "Pending"),
+        ("confirmed", "Confirmed"),
+        ("processing", "Processing"),
+        ("shipped", "Shipped"),
+        ("delivered", "Delivered"),
+        ("cancelled", "Cancelled"),
+    ]
+    PAYMENT_METHOD_CHOICES = [
+        ("cash", "Cash"),
+        ("bank_transfer", "Bank Transfer"),
+        ("esewa", "eSewa"),
+        ("khalti", "Khalti"),
+        ("cod", "Cash on Delivery"),
+    ]
+    PAYMENT_STATUS_CHOICES = [
+        ("pending", "Pending"),
+        ("paid", "Paid"),
+        ("partially_paid", "Partially Paid"),
+        ("cancelled", "Cancelled"),
+    ]
+    SOURCE_CHOICES = [
+        ("website", "Website"),
+        ("manual", "Manual"),
+        ("phone", "Phone"),
+    ]
+
+    order_number = models.CharField(max_length=20, unique=True, editable=False)
+    customer_name = models.CharField(max_length=100)
+    customer_phone = models.CharField(max_length=20)
+    customer_email = models.EmailField(blank=True, default="")
+    customer_address = models.TextField(blank=True, default="")
+
+    subtotal = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    discount_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    tax_percent = models.DecimalField(max_digits=5, decimal_places=2, default=13.00)
+    tax_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    delivery_fee = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    grand_total = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+
+    payment_method = models.CharField(max_length=20, choices=PAYMENT_METHOD_CHOICES, default="cash")
+    payment_status = models.CharField(max_length=20, choices=PAYMENT_STATUS_CHOICES, default="pending")
+    order_status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="pending")
+
+    source = models.CharField(max_length=20, choices=SOURCE_CHOICES, default="website")
+    notes = models.TextField(blank=True, default="")
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.order_number} - {self.customer_name}"
+
+    def save(self, *args, **kwargs):
+        if not self.order_number:
+            today = uuid.uuid4().hex[:6].upper()
+            self.order_number = f"ORD-{self.created_at.strftime('%Y%m%d') if self.created_at else uuid.uuid4().hex[:8].upper()}-{today}"
+        super().save(*args, **kwargs)
+
+    def recalculate_totals(self):
+        self.subtotal = sum(item.total_price for item in self.items.all())
+        self.tax_amount = (self.subtotal - self.discount_amount) * self.tax_percent / 100
+        self.grand_total = self.subtotal - self.discount_amount + self.tax_amount + self.delivery_fee
+        self.save(update_fields=["subtotal", "tax_amount", "grand_total"])
+
+    def item_count(self):
+        return self.items.count()
+
+
+class OrderItem(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="items")
+    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, blank=True)
+    product_name = models.CharField(max_length=200)
+    quantity = models.PositiveIntegerField(default=1)
+    unit_price = models.DecimalField(max_digits=10, decimal_places=2)
+    total_price = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return f"{self.product_name} x{self.quantity}"
+
+    def save(self, *args, **kwargs):
+        self.total_price = self.unit_price * self.quantity
+        super().save(*args, **kwargs)
