@@ -50,6 +50,11 @@ class ContactForm(forms.ModelForm):
 
 
 class CheckoutForm(forms.Form):
+    FULFILLMENT_CHOICES = [
+        ("delivery", "Home Delivery"),
+        ("pickup", "Pickup from Shop"),
+    ]
+
     customer_name = forms.CharField(
         max_length=100,
         widget=forms.TextInput(attrs={
@@ -71,11 +76,21 @@ class CheckoutForm(forms.Form):
             "placeholder": "Email (optional)",
         }),
     )
+    fulfillment_method = forms.ChoiceField(
+        choices=FULFILLMENT_CHOICES,
+        widget=forms.Select(attrs={
+            "class": "form-input",
+            "id": "fulfillment-method",
+            "onchange": "toggleAddress(this.value)",
+        }),
+    )
     customer_address = forms.CharField(
+        required=False,
         widget=forms.Textarea(attrs={
             "class": "form-input",
             "rows": 2,
             "placeholder": "Delivery address",
+            "id": "delivery-address",
         }),
     )
     payment_method = forms.ChoiceField(
@@ -99,3 +114,10 @@ class CheckoutForm(forms.Form):
         if not re.match(r"^\+?\d{7,15}$", cleaned):
             raise forms.ValidationError("Enter a valid phone number.")
         return cleaned
+
+    def clean_customer_address(self):
+        address = self.cleaned_data.get("customer_address", "")
+        fulfillment = self.cleaned_data.get("fulfillment_method")
+        if fulfillment == "delivery" and not address.strip():
+            raise forms.ValidationError("Delivery address is required for home delivery.")
+        return address

@@ -42,11 +42,30 @@
                         {{ form.payment_method }}
                     </div>
                 </div>
+
                 <div class="mt-4">
+                    <label class="block text-sm font-semibold text-gray-700 mb-1.5">Delivery Option *</label>
+                    {{ form.fulfillment_method }}
+                </div>
+
+                <div id="address-section" class="mt-4">
                     <label class="block text-sm font-semibold text-gray-700 mb-1.5">Delivery Address *</label>
                     {{ form.customer_address }}
                     {% if form.customer_address.errors %}<p class="text-red-500 text-xs mt-1">{{ form.customer_address.errors.0 }}</p>{% endif %}
                 </div>
+
+                <div id="pickup-info" class="mt-4 hidden bg-hardware-50 border border-hardware-200 rounded-lg p-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-hardware-100 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-store text-hardware-600"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-bold text-gray-900">Pickup from Shop</p>
+                            <p class="text-xs text-gray-500">{{ site_address|default:"Bharatpur-10, Chitwan, Nepal" }}</p>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="mt-4">
                     <label class="block text-sm font-semibold text-gray-700 mb-1.5">Order Notes</label>
                     {{ form.notes }}
@@ -84,10 +103,10 @@
                         <span class="text-gray-500">Subtotal</span>
                         <span class="font-semibold">Rs {{ subtotal|floatformat:0|intcomma }}</span>
                     </div>
-                    <div class="flex justify-between">
-                        <span class="text-gray-500">Delivery</span>
-                        <span class="font-semibold {% if delivery_fee == 0 %}text-green-600{% endif %}">
-                            {% if delivery_fee == 0 %}FREE{% else %}Rs {{ delivery_fee|floatformat:0|intcomma }}{% endif %}
+                    <div class="flex justify-between" id="delivery-row">
+                        <span class="text-gray-500" id="delivery-label">Delivery</span>
+                        <span class="font-semibold" id="delivery-amount">
+                            {% if delivery_fee == 0 %}<span class="text-green-600">FREE</span>{% else %}Rs {{ delivery_fee|floatformat:0|intcomma }}{% endif %}
                         </span>
                     </div>
                     <div class="flex justify-between">
@@ -96,7 +115,7 @@
                     </div>
                     <div class="border-t border-gray-100 pt-3 flex justify-between">
                         <span class="font-bold text-gray-900">Total</span>
-                        <span class="font-extrabold text-gray-900 text-xl">Rs {{ total|floatformat:0|intcomma }}</span>
+                        <span class="font-extrabold text-gray-900 text-xl" id="total-amount">Rs {{ total|floatformat:0|intcomma }}</span>
                     </div>
                 </div>
                 <button type="submit" class="btn btn-primary btn-lg w-full mt-6" style="justify-content:center;">
@@ -109,4 +128,46 @@
         </div>
     </form>
 </div>
+
+<script>
+    const SUBTOTAL = {{ subtotal|floatformat:2 }};
+    const TAX_RATE = 0.13;
+    const DELIVERY_FEE_VAL = {{ delivery_fee|floatformat:2 }};
+
+    function toggleAddress(value) {
+        const addressSection = document.getElementById('address-section');
+        const pickupInfo = document.getElementById('pickup-info');
+        const deliveryRow = document.getElementById('delivery-row');
+        const deliveryLabel = document.getElementById('delivery-label');
+        const deliveryAmount = document.getElementById('delivery-amount');
+        const totalAmount = document.getElementById('total-amount');
+        const addressInput = document.getElementById('delivery-address');
+
+        if (value === 'pickup') {
+            addressSection.classList.add('hidden');
+            pickupInfo.classList.remove('hidden');
+            addressInput.removeAttribute('required');
+            deliveryLabel.textContent = 'Delivery';
+            deliveryAmount.innerHTML = '<span class="text-green-600">FREE (Pickup)</span>';
+            var tax = SUBTOTAL * TAX_RATE;
+            var total = SUBTOTAL + tax;
+            totalAmount.textContent = 'Rs ' + Math.round(total).toLocaleString();
+        } else {
+            addressSection.classList.remove('hidden');
+            pickupInfo.classList.add('hidden');
+            addressInput.setAttribute('required', '');
+            deliveryLabel.textContent = 'Delivery';
+            var fee = SUBTOTAL >= {{ free_delivery_threshold|floatformat:2 }} ? 0 : DELIVERY_FEE_VAL;
+            deliveryAmount.innerHTML = fee == 0 ? '<span class="text-green-600">FREE</span>' : 'Rs ' + Math.round(fee).toLocaleString();
+            var tax = SUBTOTAL * TAX_RATE;
+            var total = SUBTOTAL + fee + tax;
+            totalAmount.textContent = 'Rs ' + Math.round(total).toLocaleString();
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        var sel = document.getElementById('fulfillment-method');
+        if (sel) toggleAddress(sel.value);
+    });
+</script>
 {% endblock %}

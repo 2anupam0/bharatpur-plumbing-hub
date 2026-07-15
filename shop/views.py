@@ -169,6 +169,9 @@ def checkout(request):
     if request.method == "POST":
         form = CheckoutForm(request.POST)
         if form.is_valid():
+            is_delivery = form.cleaned_data["fulfillment_method"] == "delivery"
+            delivery_fee = cart.get_delivery_fee() if is_delivery else Decimal("0")
+
             order = Order.objects.create(
                 customer_name=form.cleaned_data["customer_name"],
                 customer_phone=form.cleaned_data["customer_phone"],
@@ -177,7 +180,7 @@ def checkout(request):
                 payment_method=form.cleaned_data["payment_method"],
                 notes=form.cleaned_data.get("notes", ""),
                 source="website",
-                delivery_fee=cart.get_delivery_fee(),
+                delivery_fee=delivery_fee,
                 tax_percent=Decimal("13.00"),
             )
             for item in cart.get_items():
@@ -211,6 +214,7 @@ def checkout(request):
         "delivery_fee": cart.get_delivery_fee(),
         "tax": cart.get_tax(),
         "total": cart.get_total(),
+        "free_delivery_threshold": SiteSettings.load().free_delivery_threshold,
     }
     return render(request, "shop/checkout.html", context)
 
