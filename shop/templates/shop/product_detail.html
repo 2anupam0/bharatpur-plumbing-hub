@@ -59,12 +59,16 @@
                     <div class="gallery-thumb {% if forloop.first %}active{% endif %}" data-index="{{ forloop.counter0 }}" onclick="galleryGoTo({{ forloop.counter0 }})" style="flex:0 0 68px;height:68px;border-radius:8px;overflow:hidden;border:2px solid {% if forloop.first %}#2563eb{% else %}transparent{% endif %};cursor:pointer;position:relative;transition:border-color 0.2s;box-shadow:0 1px 3px rgba(0,0,0,0.08);">
                         {% if item.type == 'image' %}
                         <img src="{{ item.url }}" alt="" style="width:100%;height:100%;object-fit:cover;">
-                        {% else %}
+                        {% elif item.type == 'video' %}
                         <div style="width:100%;height:100%;background:linear-gradient(135deg,#1a1a2e,#16213e);display:flex;align-items:center;justify-content:center;">
                             <i class="fab fa-youtube text-red-500 text-xl"></i>
                         </div>
+                        {% else %}
+                        <div style="width:100%;height:100%;background:linear-gradient(135deg,#0f0f23,#1a1a3e);display:flex;align-items:center;justify-content:center;">
+                            <i class="fas fa-play text-white text-xl"></i>
+                        </div>
                         {% endif %}
-                        {% if item.type == 'video' %}
+                        {% if item.type != 'image' %}
                         <div style="position:absolute;bottom:2px;right:2px;background:rgba(0,0,0,0.6);border-radius:3px;padding:1px 4px;"><i class="fas fa-play text-white" style="font-size:8px;"></i></div>
                         {% endif %}
                     </div>
@@ -199,19 +203,28 @@ function galleryGoTo(idx) {
     galleryIndex = idx;
     const item = galleryItems[idx];
     const active = document.getElementById('gallery-active');
-    const newEl = document.createElement(item.type === 'video' ? 'iframe' : 'img');
-    newEl.id = 'gallery-active';
-    newEl.setAttribute('data-type', item.type);
-    newEl.setAttribute('data-src', item.url);
+    let newEl;
     if (item.type === 'video') {
+        newEl = document.createElement('iframe');
         newEl.src = item.embedUrl;
         newEl.style.cssText = 'width:100%;height:400px;border:none;';
         newEl.allowFullscreen = true;
+    } else if (item.type === 'local_video') {
+        newEl = document.createElement('video');
+        newEl.src = item.url;
+        newEl.controls = true;
+        newEl.autoplay = true;
+        newEl.playsInline = true;
+        newEl.style.cssText = 'width:100%;height:400px;object-fit:contain;background:#000;display:block;';
     } else {
+        newEl = document.createElement('img');
         newEl.src = item.url;
         newEl.alt = '{{ product.name }}';
         newEl.style.cssText = 'width:100%;height:400px;object-fit:contain;display:block;transition:opacity 0.3s;';
     }
+    newEl.id = 'gallery-active';
+    newEl.setAttribute('data-type', item.type);
+    newEl.setAttribute('data-src', item.url);
     active.replaceWith(newEl);
     counterEl.textContent = (idx + 1) + ' / ' + total;
     thumbs.forEach((t, i) => {

@@ -128,7 +128,8 @@ class ProductImage(models.Model):
 
 class ProductVideo(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='videos')
-    video_url = models.URLField(help_text="YouTube or Vimeo URL")
+    video_url = models.URLField(help_text="YouTube or Vimeo URL", blank=True)
+    video_file = models.FileField(upload_to='products/videos/', blank=True, help_text="Upload MP4/WebM video file")
     caption = models.CharField(max_length=200, blank=True)
     sort_order = models.PositiveIntegerField(default=0)
 
@@ -150,6 +151,9 @@ class ProductVideo(models.Model):
             video_id = url.split('vimeo.com/')[-1].split('?')[0]
             return f'https://player.vimeo.com/video/{video_id}'
         return url
+
+    def is_external(self):
+        return bool(self.video_url)
 
 
 class ContactInquiry(models.Model):

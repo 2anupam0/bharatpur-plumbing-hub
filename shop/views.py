@@ -91,11 +91,18 @@ def product_detail(request, slug):
             'embed_url': '',
         })
     for vid in product.videos.all():
-        gallery_items.append({
-            'type': 'video',
-            'url': vid.video_url,
-            'embed_url': vid.get_embed_url(),
-        })
+        if vid.is_external():
+            gallery_items.append({
+                'type': 'video',
+                'url': vid.video_url,
+                'embed_url': vid.get_embed_url(),
+            })
+        elif vid.video_file:
+            gallery_items.append({
+                'type': 'local_video',
+                'url': vid.video_file.url,
+                'embed_url': '',
+            })
 
     context = {
         "product": product,
