@@ -49,13 +49,7 @@
         <div class="max-w-7xl mx-auto px-4">
             <div class="flex items-center justify-between h-16 lg:h-[72px]">
                 <a href="{% url 'home' %}" class="flex items-center gap-3 group">
-                    <div class="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-700 rounded-xl flex items-center justify-center shadow-sm group-hover:shadow-md transition-shadow">
-                        <i class="fas fa-wrench text-white text-base"></i>
-                    </div>
-                    <div class="hidden sm:block">
-                        <h1 class="text-[15px] font-bold text-gray-900 leading-tight tracking-tight">{{ site_name }}</h1>
-                        <p class="text-[11px] text-gray-400 font-medium">Bharatpur, Chitwan</p>
-                    </div>
+                    <img src="{% static 'shop/images/logo.png' %}" alt="{{ site_name }}" class="h-10 w-auto rounded-lg shadow-sm group-hover:shadow-md transition-shadow">
                 </a>
 
                 <nav class="hidden lg:flex items-center gap-0.5">
@@ -134,9 +128,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-8">
                 <div>
                     <div class="flex items-center gap-3 mb-5">
-                        <div class="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-700 rounded-xl flex items-center justify-center">
-                            <i class="fas fa-wrench text-white text-sm"></i>
-                        </div>
+                        <img src="{% static 'shop/images/logo.png' %}" alt="{{ site_name }}" class="h-10 w-auto rounded-lg">
                         <h3 class="text-white font-bold text-lg tracking-tight">{{ site_name }}</h3>
                     </div>
                     <p class="text-sm leading-relaxed mb-5 text-gray-400">Your trusted partner for all plumbing and hardware materials in Bharatpur. Serving the community with genuine products since 2005.</p>
