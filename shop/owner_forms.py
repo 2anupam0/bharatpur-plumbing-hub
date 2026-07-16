@@ -43,10 +43,23 @@ class ProductForm(forms.ModelForm):
                 "class": "ow-input",
                 "placeholder": "0",
             }),
-            "unit": forms.TextInput(attrs={
+            "unit": forms.Select(attrs={
                 "class": "ow-input",
-                "placeholder": "piece, meter, kg, etc.",
-            }),
+            }, choices=[
+                ("piece", "Piece"),
+                ("kg", "Kilogram (kg)"),
+                ("meter", "Meter"),
+                ("inch", "Inch"),
+                ("foot", "Foot"),
+                ("yard", "Yard"),
+                ("liter", "Liter"),
+                ("box", "Box"),
+                ("set", "Set"),
+                ("roll", "Roll"),
+                ("pipe", "Pipe"),
+                ("fitting", "Fitting"),
+                ("custom", "Custom"),
+            ]),
             "brand": forms.TextInput(attrs={
                 "class": "ow-input",
                 "placeholder": "Brand name (optional)",

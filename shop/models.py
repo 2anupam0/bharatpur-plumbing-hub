@@ -61,7 +61,22 @@ class Product(models.Model):
     is_featured = models.BooleanField(default=False)
     unit = models.CharField(
         max_length=20, default="piece",
-        help_text="Unit of measurement (piece, meter, kg, etc.)"
+        choices=[
+            ("piece", "Piece"),
+            ("kg", "Kilogram (kg)"),
+            ("meter", "Meter"),
+            ("inch", "Inch"),
+            ("foot", "Foot"),
+            ("yard", "Yard"),
+            ("liter", "Liter"),
+            ("box", "Box"),
+            ("set", "Set"),
+            ("roll", "Roll"),
+            ("pipe", "Pipe"),
+            ("fitting", "Fitting"),
+            ("custom", "Custom"),
+        ],
+        help_text="Unit of measurement"
     )
     brand = models.CharField(max_length=100, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
