@@ -281,7 +281,7 @@ body {
 }
 .cart-icon-btn {
     position: absolute;
-    bottom: 56px;
+    bottom: 10px;
     right: 10px;
     z-index: 5;
     width: 36px;
