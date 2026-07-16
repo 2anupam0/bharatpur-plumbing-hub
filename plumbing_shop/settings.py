@@ -107,7 +107,7 @@ if not DEBUG:
 
 WHATSAPP_PHONE = "+9779800000000"
 
-SITE_NAME = "ARUN Suppliers"
+SITE_NAME = "WONTA SUPPLIERS"
 SITE_TAGLINE = "All Plumbing & Hardware Materials in Bharatpur"
 SITE_PHONE = "+9779800000000"
 SITE_EMAIL = "info@bharatpurplumbing.com"
