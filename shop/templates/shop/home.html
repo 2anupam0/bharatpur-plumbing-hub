@@ -102,6 +102,11 @@
     <div class="product-grid">
         {% for product in featured_products %}
         <div class="product-card animate-in">
+            {% if product.is_in_stock %}
+            <button type="button" class="cart-icon-btn" onclick="event.preventDefault();event.stopPropagation();addToCart({{ product.pk }}, this)" title="Add to Cart">
+                <i class="fas fa-cart-plus"></i>
+            </button>
+            {% endif %}
             <a href="{% url 'product_detail' product.slug %}" class="product-card-link">
                 <div class="product-image">
                     {% if product.image %}
@@ -123,11 +128,6 @@
                         <span class="current">Rs {{ product.price|floatformat:0|intcomma }}</span>
                         {% if product.has_discount %}
                         <span class="original">Rs {{ product.original_price|floatformat:0|intcomma }}</span>
-                        {% endif %}
-                        {% if product.is_in_stock %}
-                        <button type="button" class="cart-icon-btn" onclick="event.preventDefault();event.stopPropagation();addToCart({{ product.pk }}, this)" title="Add to Cart">
-                            <i class="fas fa-cart-plus"></i>
-                        </button>
                         {% endif %}
                     </div>
                     <div class="product-meta">
