@@ -15,7 +15,7 @@ from qrcode.image.styles.moduledrawers import RoundedModuleDrawer
 from qrcode.image.styles.colormasks import SolidFillColorMask
 
 from .models import (
-    Category, Product, SiteSettings, Order, OrderItem,
+    Category, Product, ProductImage, ProductVideo, SiteSettings, Order, OrderItem,
     Bill, BillItem,
 )
 from .owner_forms import ProductForm, BillCreateForm
@@ -110,6 +110,12 @@ def owner_product_add(request):
         form = ProductForm(request.POST, request.FILES)
         if form.is_valid():
             product = form.save()
+            for img in request.FILES.getlist('gallery_images'):
+                ProductImage.objects.create(product=product, image=img)
+            for url in request.POST.getlist('video_urls'):
+                url = url.strip()
+                if url:
+                    ProductVideo.objects.create(product=product, video_url=url)
             messages.success(request, f"Product '{product.name}' added successfully.")
             return redirect("owner_products")
     else:
@@ -124,6 +130,18 @@ def owner_product_edit(request, pk):
         form = ProductForm(request.POST, request.FILES, instance=product)
         if form.is_valid():
             form.save()
+            for img in request.FILES.getlist('gallery_images'):
+                ProductImage.objects.create(product=product, image=img)
+            for url in request.POST.getlist('video_urls'):
+                url = url.strip()
+                if url:
+                    ProductVideo.objects.create(product=product, video_url=url)
+            delete_images = request.POST.getlist('delete_image')
+            for img_id in delete_images:
+                ProductImage.objects.filter(pk=img_id, product=product).delete()
+            delete_videos = request.POST.getlist('delete_video')
+            for vid_id in delete_videos:
+                ProductVideo.objects.filter(pk=vid_id, product=product).delete()
             messages.success(request, f"Product '{product.name}' updated successfully.")
             return redirect("owner_products")
     else:

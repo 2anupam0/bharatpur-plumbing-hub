@@ -106,6 +106,51 @@ class Product(models.Model):
     def is_in_stock(self):
         return self.stock > 0
 
+    def get_all_images(self):
+        images = list(self.additional_images.all().order_by('sort_order'))
+        if self.image:
+            images.insert(0, type('Obj', (), {'image': self.image, 'is_primary': True})())
+        return images
+
+
+class ProductImage(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='additional_images')
+    image = models.ImageField(upload_to='products/gallery/')
+    caption = models.CharField(max_length=200, blank=True)
+    sort_order = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ['sort_order']
+
+    def __str__(self):
+        return f"Image for {self.product.name} #{self.sort_order}"
+
+
+class ProductVideo(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='videos')
+    video_url = models.URLField(help_text="YouTube or Vimeo URL")
+    caption = models.CharField(max_length=200, blank=True)
+    sort_order = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ['sort_order']
+
+    def __str__(self):
+        return f"Video for {self.product.name} #{self.sort_order}"
+
+    def get_embed_url(self):
+        url = self.video_url
+        if 'youtube.com/watch' in url:
+            video_id = url.split('v=')[-1].split('&')[0]
+            return f'https://www.youtube.com/embed/{video_id}'
+        elif 'youtu.be/' in url:
+            video_id = url.split('youtu.be/')[-1].split('?')[0]
+            return f'https://www.youtube.com/embed/{video_id}'
+        elif 'vimeo.com/' in url:
+            video_id = url.split('vimeo.com/')[-1].split('?')[0]
+            return f'https://player.vimeo.com/video/{video_id}'
+        return url
+
 
 class ContactInquiry(models.Model):
     INQUIRY_TYPES = [

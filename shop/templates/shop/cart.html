@@ -21,13 +21,17 @@
             {% for item in cart_items %}
             <div class="card flex flex-col sm:flex-row gap-4 p-4">
                 <div class="w-full sm:w-24 h-24 rounded-lg overflow-hidden bg-gray-100 shrink-0">
-                    {% if item.product.image %}
+                    {% with first_img=item.product.additional_images.all.0 %}
+                    {% if first_img %}
+                    <img src="{{ first_img.image.url }}" alt="{{ item.product.name }}" class="w-full h-full object-cover">
+                    {% elif item.product.image %}
                     <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="w-full h-full object-cover">
                     {% else %}
                     <div class="w-full h-full flex items-center justify-center text-gray-300 text-2xl">
                         <i class="fas fa-image"></i>
                     </div>
                     {% endif %}
+                    {% endwith %}
                 </div>
                 <div class="flex-1 min-w-0">
                     <div class="flex items-start justify-between gap-2">

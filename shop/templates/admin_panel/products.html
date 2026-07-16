@@ -56,11 +56,15 @@
                 {% for p in products %}
                 <tr class="border-b border-slate-100 hover:bg-slate-50 transition-colors">
                     <td class="px-4 py-3">
-                        {% if p.image %}
+                        {% with first_img=p.additional_images.all.0 %}
+                        {% if first_img %}
+                        <img src="{{ first_img.image.url }}" alt="{{ p.name }}" class="w-10 h-10 rounded-lg object-cover border border-slate-200">
+                        {% elif p.image %}
                         <img src="{{ p.image.url }}" alt="{{ p.name }}" class="w-10 h-10 rounded-lg object-cover border border-slate-200">
                         {% else %}
                         <div class="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center text-slate-400"><i class="fas fa-image text-sm"></i></div>
                         {% endif %}
+                        {% endwith %}
                     </td>
                     <td class="px-4 py-3 font-semibold text-slate-800">{{ p.name }}</td>
                     <td class="px-4 py-3"><span class="inline-block px-2.5 py-0.5 bg-blue-100 text-blue-700 rounded-full text-xs font-semibold">{{ p.category }}</span></td>

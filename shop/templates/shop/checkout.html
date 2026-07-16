@@ -78,11 +78,15 @@
                     {% for item in cart_items %}
                     <div class="flex items-center gap-3 py-2 {% if not forloop.last %}border-b border-gray-100{% endif %}">
                         <div class="w-12 h-12 rounded-lg overflow-hidden bg-gray-100 shrink-0">
-                            {% if item.product.image %}
+                            {% with first_img=item.product.additional_images.all.0 %}
+                            {% if first_img %}
+                            <img src="{{ first_img.image.url }}" alt="{{ item.product.name }}" class="w-full h-full object-cover">
+                            {% elif item.product.image %}
                             <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="w-full h-full object-cover">
                             {% else %}
                             <div class="w-full h-full flex items-center justify-center text-gray-300"><i class="fas fa-image"></i></div>
                             {% endif %}
+                            {% endwith %}
                         </div>
                         <div class="flex-1 min-w-0">
                             <p class="text-sm font-semibold text-gray-900 truncate">{{ item.product.name }}</p>

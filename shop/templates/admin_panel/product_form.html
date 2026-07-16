@@ -63,6 +63,52 @@
                 {% endfor %}
             </div>
 
+            <!-- Gallery Images -->
+            <div class="mt-6 pt-5 border-t border-slate-200">
+                <h4 class="text-sm font-bold text-slate-800 mb-3"><i class="fas fa-images mr-1.5 text-brand-600"></i> Additional Photos</h4>
+                {% if editing and product.additional_images.all %}
+                <div class="grid grid-cols-3 sm:grid-cols-4 gap-3 mb-4">
+                    {% for img in product.additional_images.all %}
+                    <div class="relative group">
+                        <img src="{{ img.image.url }}" alt="{{ img.caption }}" class="w-full h-24 rounded-lg object-cover border border-slate-200">
+                        <label class="absolute top-1 right-1 cursor-pointer">
+                            <input type="checkbox" name="delete_image" value="{{ img.pk }}" class="hidden peer">
+                            <span class="opacity-0 group-hover:opacity-100 transition-opacity bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs peer-checked:opacity-100 peer-checked:bg-red-700"><i class="fas fa-trash"></i></span>
+                        </label>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                <input type="file" name="gallery_images" accept="image/*" multiple class="w-full px-4 py-2.5 border-2 border-dashed border-slate-300 rounded-xl text-sm focus:border-brand-600 focus:outline-none transition-colors file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-brand-50 file:text-brand-700 hover:file:bg-brand-100">
+                <p class="text-xs text-slate-400 mt-1">Select multiple images at once (Ctrl+Click). {% if editing %}Check an image to delete it.{% endif %}</p>
+            </div>
+
+            <!-- Videos -->
+            <div class="mt-6 pt-5 border-t border-slate-200">
+                <h4 class="text-sm font-bold text-slate-800 mb-3"><i class="fas fa-video mr-1.5 text-brand-600"></i> Product Videos</h4>
+                {% if editing and product.videos.all %}
+                <div class="space-y-2 mb-4">
+                    {% for vid in product.videos.all %}
+                    <div class="flex items-center gap-2 p-2 bg-slate-50 rounded-lg border border-slate-200">
+                        <i class="fas fa-play-circle text-brand-600"></i>
+                        <a href="{{ vid.video_url }}" target="_blank" class="text-sm text-brand-600 hover:underline flex-1 truncate">{{ vid.video_url }}</a>
+                        <label class="flex items-center gap-1 cursor-pointer">
+                            <input type="checkbox" name="delete_video" value="{{ vid.pk }}" class="rounded text-red-600">
+                            <span class="text-xs text-red-500">Remove</span>
+                        </label>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                <div id="video-inputs" class="space-y-2">
+                    <div class="flex items-center gap-2">
+                        <input type="url" name="video_urls" placeholder="YouTube or Vimeo URL" class="flex-1 px-4 py-2.5 border-2 border-slate-200 rounded-xl text-sm focus:border-brand-600 focus:outline-none transition-colors">
+                        <button type="button" onclick="addVideoInput()" class="px-3 py-2.5 rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors"><i class="fas fa-plus text-sm"></i></button>
+                    </div>
+                </div>
+                <p class="text-xs text-slate-400 mt-1">Paste YouTube or Vimeo URLs. Click + to add more.</p>
+            </div>
+
             <div class="flex items-center gap-3 mt-6 pt-5 border-t border-slate-200">
                 <button type="submit" class="px-5 py-2.5 rounded-xl bg-brand-600 text-white font-semibold text-sm hover:bg-brand-700 transition-colors">
                     <i class="fas fa-check mr-1.5"></i> {% if editing %}Update Product{% else %}Create Product{% endif %}
@@ -72,4 +118,16 @@
         </form>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function addVideoInput() {
+    const container = document.getElementById('video-inputs');
+    const row = document.createElement('div');
+    row.className = 'flex items-center gap-2';
+    row.innerHTML = '<input type="url" name="video_urls" placeholder="YouTube or Vimeo URL" class="flex-1 px-4 py-2.5 border-2 border-slate-200 rounded-xl text-sm focus:border-brand-600 focus:outline-none transition-colors"><button type="button" onclick="this.parentElement.remove()" class="px-3 py-2.5 rounded-xl bg-red-100 text-red-600 hover:bg-red-200 transition-colors"><i class="fas fa-times text-sm"></i></button>';
+    container.appendChild(row);
+}
+</script>
 {% endblock %}

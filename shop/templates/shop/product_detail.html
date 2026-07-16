@@ -22,22 +22,49 @@
 <div class="max-w-7xl mx-auto px-4 py-8">
     <div class="product-detail-card">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-0">
-            <div class="product-detail-image">
-                {% if product.image %}
-                <img src="{{ product.image.url }}" alt="{{ product.name }}">
-                {% else %}
-                <div class="w-full h-full flex items-center justify-center">
+            <div class="product-detail-image" style="position:relative;">
+                <div id="main-display" style="width:100%;height:100%;min-height:350px;display:flex;align-items:center;justify-content:center;background:#f8f9fa;">
+                    {% if product.image %}
+                    <img id="main-image" src="{{ product.image.url }}" alt="{{ product.name }}" style="max-width:100%;max-height:100%;object-fit:contain;">
+                    {% elif product.videos.all %}
+                    {% with vid=product.videos.all.0 %}
+                    <iframe src="{{ vid.get_embed_url }}" style="width:100%;height:100%;min-height:350px;border:none;" allowfullscreen></iframe>
+                    {% endwith %}
+                    {% else %}
                     <div class="text-center">
                         <i class="fas fa-image text-6xl text-gray-200 mb-3"></i>
                         <p class="text-sm text-gray-400">No image available</p>
                     </div>
+                    {% endif %}
                 </div>
-                {% endif %}
                 {% if product.has_discount %}
                 <span class="badge-discount" style="font-size:13px;padding:6px 14px;">Save {{ product.discount_percentage }}%</span>
                 {% endif %}
                 {% if product.is_featured %}
                 <span class="badge-featured" style="font-size:13px;padding:6px 14px;"><i class="fas fa-star"></i></span>
+                {% endif %}
+                {% if product.additional_images.all or product.videos.all %}
+                <div id="gallery-strip" style="display:flex;gap:8px;padding:10px;overflow-x:auto;scroll-behavior:smooth;background:#fff;border-top:1px solid #eee;">
+                    <div class="gallery-thumb active" onclick="showGalleryItem('image', '{{ product.image.url }}', this)" style="flex:0 0 64px;height:64px;border-radius:8px;overflow:hidden;border:2px solid #2563eb;cursor:pointer;">
+                        {% if product.image %}
+                        <img src="{{ product.image.url }}" alt="Main" style="width:100%;height:100%;object-fit:cover;">
+                        {% else %}
+                        <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#e5e7eb;"><i class="fas fa-image text-gray-400"></i></div>
+                        {% endif %}
+                    </div>
+                    {% for img in product.additional_images.all %}
+                    <div class="gallery-thumb" onclick="showGalleryItem('image', '{{ img.image.url }}', this)" style="flex:0 0 64px;height:64px;border-radius:8px;overflow:hidden;border:2px solid transparent;cursor:pointer;">
+                        <img src="{{ img.image.url }}" alt="{{ img.caption }}" style="width:100%;height:100%;object-fit:cover;">
+                    </div>
+                    {% endfor %}
+                    {% for vid in product.videos.all %}
+                    <div class="gallery-thumb" onclick="showGalleryItem('video', '{{ vid.get_embed_url }}', this)" style="flex:0 0 64px;height:64px;border-radius:8px;overflow:hidden;border:2px solid transparent;cursor:pointer;position:relative;">
+                        <div style="width:100%;height:100%;background:#1a1a2e;display:flex;align-items:center;justify-content:center;">
+                            <i class="fab fa-youtube text-red-500 text-lg"></i>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
                 {% endif %}
             </div>
 
@@ -132,11 +159,15 @@
             {% endif %}
             <a href="{% url 'product_detail' rp.slug %}" class="product-card-link">
                 <div class="product-image">
-                    {% if rp.image %}
+                    {% with first_img=rp.additional_images.all.0 %}
+                    {% if first_img %}
+                    <img src="{{ first_img.image.url }}" alt="{{ rp.name }}" loading="lazy">
+                    {% elif rp.image %}
                     <img src="{{ rp.image.url }}" alt="{{ rp.name }}" loading="lazy">
                     {% else %}
                     <div class="placeholder-icon"><i class="fas fa-image"></i></div>
                     {% endif %}
+                    {% endwith %}
                 </div>
                 <div class="product-info" style="padding:12px;">
                     <h3 class="product-name" style="font-size:13px;">{{ rp.name }}</h3>
@@ -148,4 +179,19 @@
     </div>
 </section>
 {% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function showGalleryItem(type, src, thumb) {
+    const display = document.getElementById('main-display');
+    document.querySelectorAll('.gallery-thumb').forEach(t => t.style.borderColor = 'transparent');
+    thumb.style.borderColor = '#2563eb';
+    if (type === 'image') {
+        display.innerHTML = '<img id="main-image" src="' + src + '" alt="Product" style="max-width:100%;max-height:100%;object-fit:contain;">';
+    } else {
+        display.innerHTML = '<iframe src="' + src + '" style="width:100%;height:100%;min-height:350px;border:none;" allowfullscreen></iframe>';
+    }
+}
+</script>
 {% endblock %}

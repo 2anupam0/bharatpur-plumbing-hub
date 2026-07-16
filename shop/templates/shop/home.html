@@ -109,11 +109,15 @@
             {% endif %}
             <a href="{% url 'product_detail' product.slug %}" class="product-card-link">
                 <div class="product-image">
-                    {% if product.image %}
+                    {% with first_img=product.additional_images.all.0 %}
+                    {% if first_img %}
+                    <img src="{{ first_img.image.url }}" alt="{{ product.name }}" loading="lazy">
+                    {% elif product.image %}
                     <img src="{{ product.image.url }}" alt="{{ product.name }}" loading="lazy">
                     {% else %}
                     <div class="placeholder-icon"><i class="fas fa-image"></i></div>
                     {% endif %}
+                    {% endwith %}
                     {% if product.has_discount %}
                     <span class="badge-discount">-{{ product.discount_percentage }}%</span>
                     {% endif %}
