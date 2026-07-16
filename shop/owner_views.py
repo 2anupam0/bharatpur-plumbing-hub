@@ -398,3 +398,50 @@ def owner_product_search_api(request):
         Q(name__icontains=q) | Q(brand__icontains=q)
     ).values("pk", "name", "price", "stock", "unit", "category__name")[:15]
     return JsonResponse({"results": list(products)})
+
+
+@owner_login_required
+def owner_order_to_bill(request, pk):
+    order = get_object_or_404(Order, pk=pk)
+
+    existing_bill = Bill.objects.filter(
+        customer_name=order.customer_name,
+        customer_phone=order.customer_phone,
+        notes__contains=f"Order: {order.order_number}",
+    ).first()
+    if existing_bill:
+        messages.warning(request, f"Bill {existing_bill.bill_number} already exists for this order.")
+        return redirect("owner_bill_detail", pk=existing_bill.pk)
+
+    bill = Bill.objects.create(
+        customer_name=order.customer_name,
+        customer_phone=order.customer_phone,
+        customer_address=order.customer_address,
+        discount_amount=order.discount_amount,
+        tax_percent=order.tax_percent,
+        payment_method=order.payment_method,
+        status="confirmed",
+        notes=f"Order: {order.order_number}",
+        created_by=request.user,
+    )
+
+    for order_item in order.items.all():
+        BillItem.objects.create(
+            bill=bill,
+            product=order_item.product,
+            product_name=order_item.product_name,
+            quantity=order_item.quantity,
+            unit_price=order_item.unit_price,
+            total_price=order_item.total_price,
+        )
+        if order_item.product:
+            order_item.product.stock = max(0, order_item.product.stock - order_item.quantity)
+            order_item.product.save(update_fields=["stock"])
+
+    bill.recalculate_totals()
+    if order.delivery_fee > 0:
+        bill.notes += f" (Delivery fee: Rs {order.delivery_fee})"
+        bill.save(update_fields=["notes"])
+
+    messages.success(request, f"Bill {bill.bill_number} created from order {order.order_number}.")
+    return redirect("owner_bill_detail", pk=bill.pk)

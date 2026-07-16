@@ -19,6 +19,7 @@ urlpatterns = [
     path("categories/<int:pk>/delete/", views.admin_category_delete, name="admin_panel_category_delete"),
     path("orders/", views.admin_orders, name="admin_panel_orders"),
     path("orders/<int:pk>/", views.admin_order_detail, name="admin_panel_order_detail"),
+    path("orders/<int:pk>/create-bill/", views.admin_order_to_bill, name="admin_panel_order_to_bill"),
     path("bills/", views.admin_bills, name="admin_panel_bills"),
     path("bills/<int:pk>/", views.admin_bill_detail, name="admin_panel_bill_detail"),
     path("inquiries/", views.admin_inquiries, name="admin_panel_inquiries"),

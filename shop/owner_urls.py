@@ -10,6 +10,7 @@ urlpatterns = [
     path("products/search-api/", owner_views.owner_product_search_api, name="owner_product_search_api"),
     path("orders/", owner_views.owner_orders, name="owner_orders"),
     path("orders/<int:pk>/", owner_views.owner_order_detail, name="owner_order_detail"),
+    path("orders/<int:pk>/create-bill/", owner_views.owner_order_to_bill, name="owner_order_to_bill"),
     path("bills/", owner_views.owner_bills, name="owner_bills"),
     path("bills/create/", owner_views.owner_bill_create, name="owner_bill_create"),
     path("bills/<int:pk>/", owner_views.owner_bill_detail, name="owner_bill_detail"),
