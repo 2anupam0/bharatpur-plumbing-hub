@@ -129,7 +129,7 @@ function addToCart(productId, btn) {
             }
             setTimeout(function() {
                 btn.classList.remove("added");
-                btn.innerHTML = '<i class="fas fa-cart-plus"></i> Add to Cart';
+                btn.innerHTML = '<i class="fas fa-cart-plus"></i>';
             }, 1500);
         }
     })
@@ -153,6 +153,3 @@ function addToCart(productId, btn) {
         form.submit();
     });
 }
-    });
-
-});
