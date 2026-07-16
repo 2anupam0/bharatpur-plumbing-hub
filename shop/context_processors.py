@@ -17,7 +17,7 @@ def site_context(request):
         cart_count = sum(item["quantity"] for item in cart.values())
 
     return {
-        "site_name": getattr(settings, "SITE_NAME", "Bharatpur Plumbing Hub"),
+        "site_name": getattr(settings, "SITE_NAME", "ARUN Suppliers"),
         "site_tagline": getattr(settings, "SITE_TAGLINE", "All Plumbing & Hardware Materials"),
         "site_phone": getattr(settings, "SITE_PHONE", "+9779800000000"),
         "site_email": getattr(settings, "SITE_EMAIL", "info@bharatpurplumbing.com"),

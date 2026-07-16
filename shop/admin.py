@@ -367,6 +367,6 @@ class BillAdmin(admin.ModelAdmin):
         return self.readonly_fields
 
 
-admin.site.site_header = "Bharatpur Plumbing Hub"
-admin.site.site_title = "Plumbing Hub Admin"
+admin.site.site_header = "ARUN Suppliers"
+admin.site.site_title = "ARUN Suppliers Admin"
 admin.site.index_title = "Dashboard"

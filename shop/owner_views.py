@@ -353,7 +353,7 @@ def _generate_payment_qr(bill):
     esewa_id = "9800000000"
     khalti_id = "9800000000"
     ime_id = "9800000000"
-    shop_name = "Bharatpur Plumbing Hub"
+    shop_name = "ARUN Suppliers"
 
     if bill.payment_method == "esewa":
         esewa_url = f"https://esewa.com.np/qrcode?amnt={bill.grand_total}&pid={bill.bill_number}&pn={shop_name}"
@@ -368,7 +368,7 @@ def _generate_payment_qr(bill):
         qr_images["ime_pay"] = generate_qr_code_image(ime_url)
 
     elif bill.payment_method == "bank_transfer":
-        bank_text = f"BANK: Nabil Bank Ltd\nA/C: Bharatpur Plumbing Hub\nA/C No: 12345678901\nAmount: NPR {bill.grand_total}\nRef: {bill.bill_number}"
+        bank_text = f"BANK: Nabil Bank Ltd\nA/C: ARUN Suppliers\nA/C No: 12345678901\nAmount: NPR {bill.grand_total}\nRef: {bill.bill_number}"
         qr_images["bank_transfer"] = generate_qr_code_image(bank_text)
 
     elif bill.payment_method == "qr_code":
@@ -380,7 +380,7 @@ def _generate_payment_qr(bill):
         qr_images["esewa"] = generate_qr_code_image(esewa_url)
         khalti_url = f"https://khalti.com/pay?amnt={bill.grand_total}&pid={bill.bill_number}&pn={shop_name}"
         qr_images["khalti"] = generate_qr_code_image(khalti_url)
-        bank_text = f"BANK: Nabil Bank Ltd\nA/C: Bharatpur Plumbing Hub\nA/C No: 12345678901\nAmount: NPR {bill.grand_total}\nRef: {bill.bill_number}"
+        bank_text = f"BANK: Nabil Bank Ltd\nA/C: ARUN Suppliers\nA/C No: 12345678901\nAmount: NPR {bill.grand_total}\nRef: {bill.bill_number}"
         qr_images["bank_transfer"] = generate_qr_code_image(bank_text)
 
     return qr_images
