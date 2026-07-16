@@ -213,15 +213,17 @@ searchInput.addEventListener('input', function() {
     searchTimeout = setTimeout(() => {
         const matches = productsData.filter(p => p.name.toLowerCase().includes(q)).slice(0, 10);
         if (matches.length === 0) { searchResults.innerHTML = '<div class="p-4 text-sm text-ow-400 text-center">No products found.</div>'; searchResults.classList.remove('hidden'); return; }
-        searchResults.innerHTML = matches.map(p => `
-            <div class="flex items-center justify-between px-4 py-3 hover:bg-primary-50 cursor-pointer border-b border-ow-50 last:border-0" onclick="addItem(${p.pk}, '${p.name.replace(/'/g, "\\'")}', ${p.price}, ${p.stock}, '${p.unit}', '${(p.category__name||'').replace(/'/g, "\\'")}')">
+        searchResults.innerHTML = matches.map(p => {
+            const inBill = billItems.some(i => i.id === p.pk);
+            return `
+            <div class="flex items-center justify-between px-4 py-3 hover:bg-primary-50 cursor-pointer border-b border-ow-50 last:border-0 ${inBill ? 'bg-emerald-50' : ''}" onclick="addItem(${p.pk}, '${p.name.replace(/'/g, "\\'")}', ${p.price}, ${p.stock}, '${p.unit}', '${(p.category__name||'').replace(/'/g, "\\'")}')">
                 <div>
-                    <p class="text-sm font-semibold text-ow-900">${p.name}</p>
+                    <p class="text-sm font-semibold text-ow-900">${p.name} ${inBill ? '<span class="text-[10px] text-emerald-600 font-bold ml-1">SELECTED</span>' : ''}</p>
                     <p class="text-[11px] text-ow-400">${p.category__name || ''} | Stock: ${p.stock} ${p.unit}</p>
                 </div>
                 <span class="text-sm font-bold text-primary-700">Rs ${Number(p.price).toLocaleString()}</span>
-            </div>
-        `).join('');
+            </div>`;
+        }).join('');
         searchResults.classList.remove('hidden');
     }, 200);
 });
@@ -231,9 +233,12 @@ document.addEventListener('click', function(e) {
 });
 
 function addItem(id, name, price, stock, unit, category) {
-    const existing = billItems.find(i => i.id === id);
-    if (existing) { existing.qty++; }
-    else { billItems.push({ id, name, price, stock, unit, category, qty: 1 }); }
+    const existing = billItems.findIndex(i => i.id === id);
+    if (existing !== -1) {
+        billItems.splice(existing, 1);
+    } else {
+        billItems.push({ id, name, price, stock, unit, category, qty: 1 });
+    }
     searchInput.value = ''; searchResults.classList.add('hidden');
     renderItems();
     renderProductGrid();
