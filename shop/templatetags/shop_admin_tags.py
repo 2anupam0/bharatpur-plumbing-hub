@@ -27,7 +27,7 @@ def get_admin_stats():
         "inactive_products": products.filter(is_active=False).count(),
         "whatsapp_number": settings.whatsapp_number,
         "total_orders": Order.objects.count(),
-        "pending_orders": Order.objects.filter(status="pending").count(),
+        "pending_orders": Order.objects.filter(order_status="pending").count(),
         "total_bills": Bill.objects.count(),
         "total_users": User.objects.count(),
     }

@@ -237,7 +237,7 @@ class OrderAdmin(admin.ModelAdmin):
     actions = ["mark_confirmed", "mark_delivered", "mark_paid"]
 
     def grand_total_display(self, obj):
-        return format_html('<strong>Rs {:.0f}</strong>', obj.grand_total)
+        return format_html('<strong>Rs {}</strong>', f'{obj.grand_total:,.0f}')
     grand_total_display.short_description = "Total"
 
     def payment_status_badge(self, obj):

@@ -168,6 +168,18 @@
         </div>
     </div>
 
-    <button class="print-btn" onclick="window.print()"><i class="fas fa-print" style="margin-right:6px;"></i> Print Bill</button>
+    <div style="position:fixed;bottom:24px;right:24px;display:flex;gap:8px;">
+        <button class="print-btn" onclick="window.print()" style="background:#2563eb;"><i class="fas fa-print" style="margin-right:6px;"></i> Print Bill</button>
+        <button class="print-btn" onclick="saveAsPDF()" style="background:#16a34a;"><i class="fas fa-file-pdf" style="margin-right:6px;"></i> Save as PDF</button>
+    </div>
+
+    <script>
+    function saveAsPDF() {
+        // Hide save button, show only print
+        document.querySelector('[onclick="saveAsPDF()"]').style.display = 'none';
+        window.print();
+        setTimeout(() => { document.querySelector('[onclick="saveAsPDF()"]').style.display = ''; }, 1000);
+    }
+    </script>
 </body>
 </html>

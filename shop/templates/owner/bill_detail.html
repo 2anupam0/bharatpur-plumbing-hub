@@ -128,7 +128,9 @@
                     {% if bill.status != "cancelled" and bill.status != "paid" %}
                     <form method="post" onsubmit="return confirm('Cancel this bill? Stock will be restored.')"><input type="hidden" name="action" value="cancel">{% csrf_token %}<button class="ow-btn bg-red-600 text-white hover:bg-red-700 w-full text-xs"><i class="fas fa-times mr-1"></i> Cancel Bill</button></form>
                     {% endif %}
-                    <a href="{% url 'owner_bill_print' bill.pk %}" class="ow-btn ow-btn-outline w-full text-xs" target="_blank"><i class="fas fa-print mr-1"></i> Print / Download</a>
+                    <a href="{% url 'owner_bill_print' bill.pk %}" class="ow-btn ow-btn-primary w-full text-xs" target="_blank"><i class="fas fa-file-pdf mr-1"></i> Save as PDF</a>
+                    <p class="text-[10px] text-ow-400 text-center">Opens print page &rarr; choose "Save as PDF" in print dialog</p>
+                    <a href="{% url 'owner_bill_print' bill.pk %}" class="ow-btn ow-btn-outline w-full text-xs" target="_blank"><i class="fas fa-print mr-1"></i> Print Bill</a>
                 </div>
             </div>
         </div>
