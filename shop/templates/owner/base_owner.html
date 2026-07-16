@@ -1,0 +1,139 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Dashboard{% endblock %} | {{ site_name }} Owner Panel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {50:'#eff6ff',100:'#dbeafe',200:'#bfdbfe',300:'#93c5fd',400:'#60a5fa',500:'#3b82f6',600:'#2563eb',700:'#1d4ed8',800:'#1e40af',900:'#1e3a8a'},
+                        ow: {50:'#f8fafc',100:'#f1f5f9',200:'#e2e8f0',300:'#cbd5e1',400:'#94a3b8',500:'#64748b',600:'#475569',700:'#334155',800:'#1e293b',900:'#0f172a'},
+                    },
+                    fontFamily: {
+                        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'shop/css/owner.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="bg-ow-100 text-ow-800 antialiased">
+
+    <div class="flex min-h-screen">
+        <!-- Sidebar -->
+        <aside id="sidebar" class="ow-sidebar w-64 bg-ow-900 text-white flex-shrink-0 fixed h-full z-30 transform -translate-x-full lg:translate-x-0 transition-transform">
+            <div class="p-5 border-b border-ow-700/50">
+                <a href="{% url 'owner_dashboard' %}" class="flex items-center gap-3">
+                    <div class="w-9 h-9 bg-primary-600 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-wrench text-white text-sm"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-sm font-bold leading-tight">{{ site_name }}</h1>
+                        <p class="text-[10px] text-ow-400 font-medium">Owner Panel</p>
+                    </div>
+                </a>
+            </div>
+            <nav class="p-3 flex-1">
+                <p class="text-[10px] font-bold text-ow-500 uppercase tracking-wider px-3 mb-2">Main</p>
+                <a href="{% url 'owner_dashboard' %}" class="ow-nav-link {% if request.resolver_match.url_name == 'owner_dashboard' %}active{% endif %}">
+                    <i class="fas fa-th-large w-5 text-center"></i> Dashboard
+                </a>
+                <a href="{% url 'owner_products' %}" class="ow-nav-link {% if 'product' in request.resolver_match.url_name %}active{% endif %}">
+                    <i class="fas fa-box w-5 text-center"></i> Products
+                </a>
+                <a href="{% url 'owner_orders' %}" class="ow-nav-link {% if 'order' in request.resolver_match.url_name %}active{% endif %}">
+                    <i class="fas fa-shopping-cart w-5 text-center"></i> Orders
+                </a>
+
+                <p class="text-[10px] font-bold text-ow-500 uppercase tracking-wider px-3 mb-2 mt-5">Billing</p>
+                <a href="{% url 'owner_bills' %}" class="ow-nav-link {% if 'bill' in request.resolver_match.url_name %}active{% endif %}">
+                    <i class="fas fa-file-invoice-dollar w-5 text-center"></i> Bills
+                </a>
+                <a href="{% url 'owner_bill_create' %}" class="ow-nav-link {% if request.resolver_match.url_name == 'owner_bill_create' %}active{% endif %}">
+                    <i class="fas fa-plus-circle w-5 text-center"></i> Create Bill
+                </a>
+
+                <p class="text-[10px] font-bold text-ow-500 uppercase tracking-wider px-3 mb-2 mt-5">Quick Links</p>
+                <a href="{% url 'home' %}" class="ow-nav-link" target="_blank">
+                    <i class="fas fa-globe w-5 text-center"></i> View Website
+                </a>
+                <a href="/admin/" class="ow-nav-link">
+                    <i class="fas fa-cog w-5 text-center"></i> Django Admin
+                </a>
+            </nav>
+            <div class="p-4 border-t border-ow-700/50">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-primary-600 rounded-full flex items-center justify-center text-xs font-bold">
+                        {{ request.user.username|first|upper }}
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-xs font-semibold truncate">{{ request.user.get_full_name|default:request.user.username }}</p>
+                        <p class="text-[10px] text-ow-400">Shop Owner</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Overlay for mobile -->
+        <div id="sidebar-overlay" class="fixed inset-0 bg-black/50 z-20 hidden lg:hidden" onclick="toggleSidebar()"></div>
+
+        <!-- Main Content -->
+        <div class="flex-1 lg:ml-64">
+            <!-- Top Bar -->
+            <header class="bg-white border-b border-ow-200 sticky top-0 z-10">
+                <div class="flex items-center justify-between px-4 lg:px-6 h-14">
+                    <button onclick="toggleSidebar()" class="lg:hidden p-2 rounded-lg hover:bg-ow-100">
+                        <i class="fas fa-bars text-ow-600"></i>
+                    </button>
+                    <h2 class="text-sm font-bold text-ow-800">{% block page_title %}Dashboard{% endblock %}</h2>
+                    <div class="flex items-center gap-3">
+                        <a href="{% url 'owner_bill_create' %}" class="hidden sm:flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg text-xs font-semibold transition-colors">
+                            <i class="fas fa-plus"></i> New Bill
+                        </a>
+                        <div class="w-8 h-8 bg-ow-200 rounded-full flex items-center justify-center text-xs font-bold text-ow-600">
+                            <i class="fas fa-bell"></i>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            {% if messages %}
+            <div class="px-4 lg:px-6 mt-4">
+                {% for message in messages %}
+                <div class="ow-alert {% if message.tags == 'success' %}ow-alert-success{% elif message.tags == 'error' %}ow-alert-error{% else %}ow-alert-info{% endif %} mb-3">
+                    <i class="fas {% if message.tags == 'success' %}fa-check-circle{% elif message.tags == 'error' %}fa-exclamation-circle{% else %}fa-info-circle{% endif %}"></i>
+                    <span>{{ message }}</span>
+                    <button onclick="this.parentElement.remove()" class="ml-auto opacity-50 hover:opacity-100"><i class="fas fa-times"></i></button>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <main class="p-4 lg:p-6">
+                {% block content %}{% endblock %}
+            </main>
+        </div>
+    </div>
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            sidebar.classList.toggle('-translate-x-full');
+            overlay.classList.toggle('hidden');
+        }
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,165 @@
+{% extends "owner/base_owner.html" %}
+{% load humanize %}
+
+{% block title %}Dashboard{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+    <a href="{% url 'owner_products' %}" class="ow-stat-card group">
+        <div class="ow-stat-icon bg-primary-100 text-primary-600"><i class="fas fa-box"></i></div>
+        <div>
+            <p class="text-2xl font-extrabold text-ow-900">{{ total_products }}</p>
+            <p class="text-xs text-ow-500 font-medium">Total Products</p>
+        </div>
+    </a>
+    <a href="{% url 'owner_bills' %}" class="ow-stat-card group">
+        <div class="ow-stat-icon bg-emerald-100 text-emerald-600"><i class="fas fa-file-invoice-dollar"></i></div>
+        <div>
+            <p class="text-2xl font-extrabold text-ow-900">{{ total_bills }}</p>
+            <p class="text-xs text-ow-500 font-medium">Total Bills</p>
+        </div>
+    </a>
+    <a href="{% url 'owner_orders' %}" class="ow-stat-card group">
+        <div class="ow-stat-icon bg-amber-100 text-amber-600"><i class="fas fa-shopping-cart"></i></div>
+        <div>
+            <p class="text-2xl font-extrabold text-ow-900">{{ total_orders }}</p>
+            <p class="text-xs text-ow-500 font-medium">Total Orders</p>
+        </div>
+    </a>
+    <div class="ow-stat-card">
+        <div class="ow-stat-icon bg-purple-100 text-purple-600"><i class="fas fa-indian-rupee-sign"></i></div>
+        <div>
+            <p class="text-2xl font-extrabold text-ow-900">{{ total_revenue|floatformat:0|intcomma }}</p>
+            <p class="text-xs text-ow-500 font-medium">Total Revenue (Rs)</p>
+        </div>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+    <a href="{% url 'owner_orders' %}?status=pending" class="ow-mini-stat border-l-4 border-yellow-400">
+        <div>
+            <p class="text-xl font-bold text-ow-900">{{ pending_orders }}</p>
+            <p class="text-xs text-ow-500">Pending Orders</p>
+        </div>
+        <i class="fas fa-clock text-yellow-400 text-lg"></i>
+    </a>
+    <a href="{% url 'owner_bills' %}?status=confirmed" class="ow-mini-stat border-l-4 border-orange-400">
+        <div>
+            <p class="text-xl font-bold text-ow-900">{{ unpaid_bills }}</p>
+            <p class="text-xs text-ow-500">Unpaid / Unconfirmed Bills</p>
+        </div>
+        <i class="fas fa-receipt text-orange-400 text-lg"></i>
+    </a>
+    <a href="{% url 'owner_products' %}?status=low_stock" class="ow-mini-stat border-l-4 border-red-400">
+        <div>
+            <p class="text-xl font-bold text-ow-900">{{ low_stock }}</p>
+            <p class="text-xs text-ow-500">Low Stock Items</p>
+        </div>
+        <i class="fas fa-exclamation-triangle text-red-400 text-lg"></i>
+    </a>
+</div>
+
+<div class="ow-card mb-6">
+    <div class="ow-card-header flex items-center justify-between">
+        <h3 class="text-sm font-bold text-ow-900"><i class="fas fa-exclamation-circle text-orange-500 mr-2"></i>Unpaid / Confirmed Bills (needs payment)</h3>
+        <a href="{% url 'owner_bill_create' %}" class="ow-btn ow-btn-primary text-xs"><i class="fas fa-plus mr-1"></i> New Bill</a>
+    </div>
+    <div class="ow-card-body p-0">
+        <div class="overflow-x-auto">
+            <table class="ow-table">
+                <thead>
+                    <tr>
+                        <th>Bill #</th>
+                        <th>Customer</th>
+                        <th class="text-right">Amount</th>
+                        <th>Payment</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                        <th class="text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for bill in recent_unpaid_bills %}
+                    <tr>
+                        <td class="text-sm font-bold text-primary-700">{{ bill.bill_number }}</td>
+                        <td>
+                            <p class="text-sm font-medium text-ow-900">{{ bill.customer_name }}</p>
+                            {% if bill.customer_phone %}<p class="text-[11px] text-ow-400">{{ bill.customer_phone }}</p>{% endif %}
+                        </td>
+                        <td class="text-sm font-bold text-ow-900 text-right">Rs {{ bill.grand_total|floatformat:0|intcomma }}</td>
+                        <td><span class="ow-badge ow-badge-blue">{{ bill.get_payment_method_display }}</span></td>
+                        <td>
+                            <span class="ow-badge {% if bill.status == 'paid' %}ow-badge-green{% elif bill.status == 'draft' %}ow-badge-yellow{% elif bill.status == 'cancelled' %}ow-badge-red{% else %}ow-badge-orange{% endif %}">
+                                {{ bill.get_status_display }}
+                            </span>
+                        </td>
+                        <td class="text-xs text-ow-500">{{ bill.created_at|date:"M d, Y h:i A" }}</td>
+                        <td class="text-right">
+                            <div class="flex items-center justify-end gap-1">
+                                <a href="{% url 'owner_bill_detail' bill.pk %}" class="ow-btn-icon" title="View / Pay"><i class="fas fa-eye text-xs"></i></a>
+                                <a href="{% url 'owner_bill_print' bill.pk %}" class="ow-btn-icon" title="Print" target="_blank"><i class="fas fa-print text-xs"></i></a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center py-6 text-ow-400 text-sm">
+                            <i class="fas fa-check-circle text-emerald-400 text-xl mb-2 block"></i>
+                            All bills are paid! Great work.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div class="ow-card">
+        <div class="ow-card-header">
+            <h3 class="text-sm font-bold text-ow-900"><i class="fas fa-layer-group text-primary-600 mr-2"></i>Products by Category</h3>
+        </div>
+        <div class="ow-card-body">
+            {% for cat in categories %}
+            <div class="flex items-center justify-between py-2 {% if not forloop.last %}border-b border-ow-100{% endif %}">
+                <div class="flex items-center gap-3">
+                    <span class="text-lg">{{ cat.icon|default:"🔧" }}</span>
+                    <span class="text-sm font-medium text-ow-700">{{ cat.name }}</span>
+                </div>
+                <span class="text-sm font-bold text-ow-900 bg-ow-100 px-3 py-1 rounded-full">{{ cat.product_count }}</span>
+            </div>
+            {% empty %}
+            <p class="text-sm text-ow-400 text-center py-4">No categories yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="ow-card">
+        <div class="ow-card-header">
+            <h3 class="text-sm font-bold text-ow-900"><i class="fas fa-bolt text-amber-500 mr-2"></i>Quick Actions</h3>
+        </div>
+        <div class="ow-card-body">
+            <div class="grid grid-cols-2 gap-3">
+                <a href="{% url 'owner_bill_create' %}" class="ow-quick-action">
+                    <div class="w-10 h-10 bg-emerald-100 text-emerald-600 rounded-lg flex items-center justify-center"><i class="fas fa-plus"></i></div>
+                    <span class="text-xs font-semibold text-ow-700">New Walk-in Bill</span>
+                </a>
+                <a href="{% url 'owner_product_add' %}" class="ow-quick-action">
+                    <div class="w-10 h-10 bg-primary-100 text-primary-600 rounded-lg flex items-center justify-center"><i class="fas fa-box"></i></div>
+                    <span class="text-xs font-semibold text-ow-700">Add Product</span>
+                </a>
+                <a href="{% url 'owner_orders' %}?status=pending" class="ow-quick-action">
+                    <div class="w-10 h-10 bg-amber-100 text-amber-600 rounded-lg flex items-center justify-center"><i class="fas fa-clock"></i></div>
+                    <span class="text-xs font-semibold text-ow-700">Pending Orders</span>
+                </a>
+                <a href="{% url 'owner_products' %}?status=low_stock" class="ow-quick-action">
+                    <div class="w-10 h-10 bg-red-100 text-red-600 rounded-lg flex items-center justify-center"><i class="fas fa-exclamation"></i></div>
+                    <span class="text-xs font-semibold text-ow-700">Low Stock Alert</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

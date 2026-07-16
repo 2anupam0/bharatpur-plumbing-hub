@@ -1,0 +1,102 @@
+{% extends "owner/base_owner.html" %}
+{% load humanize %}
+
+{% block title %}Bills{% endblock %}
+{% block page_title %}Bills{% endblock %}
+
+{% block content %}
+<div class="flex flex-wrap items-center gap-3 mb-6">
+    <a href="{% url 'owner_bill_create' %}" class="ow-btn ow-btn-primary"><i class="fas fa-plus mr-1"></i> New Bill for Walk-in Customer</a>
+</div>
+
+<div class="ow-card mb-6">
+    <div class="ow-card-body p-3">
+        <div class="flex flex-wrap gap-2">
+            <a href="{% url 'owner_bills' %}" class="ow-tab {% if not filter_status %}ow-tab-active{% endif %}">
+                All <span class="ow-tab-count">{{ status_counts.all }}</span>
+            </a>
+            <a href="{% url 'owner_bills' %}?status=draft" class="ow-tab {% if filter_status == 'draft' %}ow-tab-active{% endif %}">
+                Draft <span class="ow-tab-count">{{ status_counts.draft }}</span>
+            </a>
+            <a href="{% url 'owner_bills' %}?status=confirmed" class="ow-tab {% if filter_status == 'confirmed' %}ow-tab-active{% endif %}">
+                Confirmed <span class="ow-tab-count">{{ status_counts.confirmed }}</span>
+            </a>
+            <a href="{% url 'owner_bills' %}?status=paid" class="ow-tab {% if filter_status == 'paid' %}ow-tab-active{% endif %}">
+                Paid <span class="ow-tab-count">{{ status_counts.paid }}</span>
+            </a>
+            <a href="{% url 'owner_bills' %}?status=cancelled" class="ow-tab {% if filter_status == 'cancelled' %}ow-tab-active{% endif %}">
+                Cancelled <span class="ow-tab-count">{{ status_counts.cancelled }}</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="ow-card">
+    <div class="ow-card-body p-0">
+        <div class="overflow-x-auto">
+            <table class="ow-table">
+                <thead>
+                    <tr>
+                        <th>Bill #</th>
+                        <th>Customer</th>
+                        <th class="text-right">Total</th>
+                        <th>Payment</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                        <th class="text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for bill in bills %}
+                    <tr>
+                        <td class="text-sm font-bold text-primary-700">{{ bill.bill_number }}</td>
+                        <td>
+                            <p class="text-sm font-medium text-ow-900">{{ bill.customer_name }}</p>
+                            {% if bill.customer_phone %}<p class="text-[11px] text-ow-400">{{ bill.customer_phone }}</p>{% endif %}
+                        </td>
+                        <td class="text-sm font-bold text-ow-900 text-right">Rs {{ bill.grand_total|floatformat:0|intcomma }}</td>
+                        <td><span class="ow-badge ow-badge-blue">{{ bill.get_payment_method_display }}</span></td>
+                        <td>
+                            <span class="ow-badge {% if bill.status == 'paid' %}ow-badge-green{% elif bill.status == 'draft' %}ow-badge-yellow{% elif bill.status == 'cancelled' %}ow-badge-red{% else %}ow-badge-orange{% endif %}">
+                                {{ bill.get_status_display }}
+                            </span>
+                        </td>
+                        <td class="text-xs text-ow-500">{{ bill.created_at|date:"M d, Y" }}</td>
+                        <td class="text-right">
+                            <div class="flex items-center justify-end gap-1">
+                                <a href="{% url 'owner_bill_detail' bill.pk %}" class="ow-btn-icon" title="View"><i class="fas fa-eye text-xs"></i></a>
+                                <a href="{% url 'owner_bill_print' bill.pk %}" class="ow-btn-icon" title="Print" target="_blank"><i class="fas fa-print text-xs"></i></a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center py-8 text-ow-400 text-sm">
+                            No bills found. <a href="{% url 'owner_bill_create' %}" class="text-primary-600 font-semibold hover:underline">Create one for a walk-in customer</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% if bills.has_other_pages %}
+<div class="flex justify-center mt-4 gap-2">
+    {% if bills.has_previous %}
+    <a href="?page={{ bills.previous_page_number }}&status={{ filter_status }}" class="ow-page-btn"><i class="fas fa-chevron-left text-xs"></i></a>
+    {% endif %}
+    {% for num in bills.paginator.page_range %}
+        {% if bills.number == num %}
+        <span class="ow-page-btn ow-page-active">{{ num }}</span>
+        {% elif num > bills.number|add:'-3' and num < bills.number|add:'3' %}
+        <a href="?page={{ num }}&status={{ filter_status }}" class="ow-page-btn">{{ num }}</a>
+        {% endif %}
+    {% endfor %}
+    {% if bills.has_next %}
+    <a href="?page={{ bills.next_page_number }}&status={{ filter_status }}" class="ow-page-btn"><i class="fas fa-chevron-right text-xs"></i></a>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}

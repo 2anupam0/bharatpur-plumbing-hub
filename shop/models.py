@@ -241,3 +241,75 @@ class OrderItem(models.Model):
     def save(self, *args, **kwargs):
         self.total_price = self.unit_price * self.quantity
         super().save(*args, **kwargs)
+
+
+class Bill(models.Model):
+    BILL_STATUS_CHOICES = [
+        ("draft", "Draft"),
+        ("confirmed", "Confirmed"),
+        ("paid", "Paid"),
+        ("cancelled", "Cancelled"),
+    ]
+    PAYMENT_METHOD_CHOICES = [
+        ("cash", "Cash"),
+        ("bank_transfer", "Bank Transfer"),
+        ("esewa", "eSewa"),
+        ("khalti", "Khalti"),
+        ("ime_pay", "IME Pay"),
+        ("qr_code", "QR Code Payment"),
+    ]
+
+    bill_number = models.CharField(max_length=20, unique=True, editable=False)
+    customer_name = models.CharField(max_length=100)
+    customer_phone = models.CharField(max_length=20, blank=True, default="")
+    customer_address = models.TextField(blank=True, default="")
+
+    subtotal = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    discount_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    tax_percent = models.DecimalField(max_digits=5, decimal_places=2, default=13.00)
+    tax_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    grand_total = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+
+    payment_method = models.CharField(max_length=20, choices=PAYMENT_METHOD_CHOICES, default="cash")
+    status = models.CharField(max_length=20, choices=BILL_STATUS_CHOICES, default="draft")
+    notes = models.TextField(blank=True, default="")
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.bill_number} - {self.customer_name}"
+
+    def save(self, *args, **kwargs):
+        if not self.bill_number:
+            today = uuid.uuid4().hex[:6].upper()
+            self.bill_number = f"BILL-{today}"
+        super().save(*args, **kwargs)
+
+    def recalculate_totals(self):
+        self.subtotal = sum(item.total_price for item in self.items.all())
+        self.tax_amount = (self.subtotal - self.discount_amount) * self.tax_percent / 100
+        self.grand_total = self.subtotal - self.discount_amount + self.tax_amount
+        self.save(update_fields=["subtotal", "tax_amount", "grand_total"])
+
+    def item_count(self):
+        return self.items.count()
+
+
+class BillItem(models.Model):
+    bill = models.ForeignKey(Bill, on_delete=models.CASCADE, related_name="items")
+    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, blank=True)
+    product_name = models.CharField(max_length=200)
+    quantity = models.PositiveIntegerField(default=1)
+    unit_price = models.DecimalField(max_digits=10, decimal_places=2)
+    total_price = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return f"{self.product_name} x{self.quantity}"
+
+    def save(self, *args, **kwargs):
+        self.total_price = self.unit_price * self.quantity
+        super().save(*args, **kwargs)

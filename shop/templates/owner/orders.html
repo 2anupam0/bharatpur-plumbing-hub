@@ -1,0 +1,96 @@
+{% extends "owner/base_owner.html" %}
+{% load humanize %}
+
+{% block title %}Orders{% endblock %}
+{% block page_title %}Online Orders{% endblock %}
+
+{% block content %}
+<div class="ow-card mb-6">
+    <div class="ow-card-body">
+        <form method="get" class="flex flex-wrap gap-3 items-end">
+            <div class="min-w-[150px]">
+                <label class="ow-label">Status</label>
+                <select name="status" class="ow-input">
+                    <option value="">All Statuses</option>
+                    <option value="pending" {% if filter_status == "pending" %}selected{% endif %}>Pending</option>
+                    <option value="confirmed" {% if filter_status == "confirmed" %}selected{% endif %}>Confirmed</option>
+                    <option value="processing" {% if filter_status == "processing" %}selected{% endif %}>Processing</option>
+                    <option value="shipped" {% if filter_status == "shipped" %}selected{% endif %}>Shipped</option>
+                    <option value="delivered" {% if filter_status == "delivered" %}selected{% endif %}>Delivered</option>
+                    <option value="cancelled" {% if filter_status == "cancelled" %}selected{% endif %}>Cancelled</option>
+                </select>
+            </div>
+            <button type="submit" class="ow-btn ow-btn-primary text-xs"><i class="fas fa-filter mr-1"></i> Filter</button>
+            <a href="{% url 'owner_orders' %}" class="ow-btn ow-btn-outline text-xs">Clear</a>
+        </form>
+    </div>
+</div>
+
+<div class="ow-card">
+    <div class="ow-card-body p-0">
+        <div class="overflow-x-auto">
+            <table class="ow-table">
+                <thead>
+                    <tr>
+                        <th>Order #</th>
+                        <th>Customer</th>
+                        <th class="text-right">Total</th>
+                        <th>Payment</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                        <th class="text-right">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                    <tr>
+                        <td class="text-sm font-bold text-primary-700">{{ order.order_number }}</td>
+                        <td>
+                            <p class="text-sm font-medium text-ow-900">{{ order.customer_name }}</p>
+                            <p class="text-[11px] text-ow-400">{{ order.customer_phone }}</p>
+                        </td>
+                        <td class="text-sm font-bold text-ow-900 text-right">Rs {{ order.grand_total|floatformat:0|intcomma }}</td>
+                        <td>
+                            <span class="ow-badge {% if order.payment_status == 'paid' %}ow-badge-green{% elif order.payment_status == 'pending' %}ow-badge-yellow{% else %}ow-badge-gray{% endif %}">
+                                {{ order.get_payment_status_display }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="ow-badge {% if order.order_status == 'delivered' %}ow-badge-green{% elif order.order_status == 'pending' %}ow-badge-yellow{% elif order.order_status == 'cancelled' %}ow-badge-red{% else %}ow-badge-blue{% endif %}">
+                                {{ order.get_order_status_display }}
+                            </span>
+                        </td>
+                        <td class="text-xs text-ow-500">{{ order.created_at|date:"M d, Y" }}</td>
+                        <td class="text-right">
+                            <a href="{% url 'owner_order_detail' order.pk %}" class="ow-btn ow-btn-outline text-xs py-1 px-3"><i class="fas fa-eye mr-1"></i> View</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center py-8 text-ow-400 text-sm">No orders found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% if orders.has_other_pages %}
+<div class="flex justify-center mt-4 gap-2">
+    {% if orders.has_previous %}
+    <a href="?page={{ orders.previous_page_number }}&status={{ filter_status }}" class="ow-page-btn"><i class="fas fa-chevron-left text-xs"></i></a>
+    {% endif %}
+    {% for num in orders.paginator.page_range %}
+        {% if orders.number == num %}
+        <span class="ow-page-btn ow-page-active">{{ num }}</span>
+        {% elif num > orders.number|add:'-3' and num < orders.number|add:'3' %}
+        <a href="?page={{ num }}&status={{ filter_status }}" class="ow-page-btn">{{ num }}</a>
+        {% endif %}
+    {% endfor %}
+    {% if orders.has_next %}
+    <a href="?page={{ orders.next_page_number }}&status={{ filter_status }}" class="ow-page-btn"><i class="fas fa-chevron-right text-xs"></i></a>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,91 @@
+{% extends "owner/base_owner.html" %}
+
+{% block title %}{% if editing %}Edit Product{% else %}Add Product{% endif %}{% endblock %}
+{% block page_title %}{% if editing %}Edit: {{ product.name }}{% else %}Add New Product{% endif %}{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl">
+    <div class="ow-card">
+        <div class="ow-card-header">
+            <h3 class="text-sm font-bold text-ow-900">{% if editing %}<i class="fas fa-pen text-primary-600 mr-2"></i>Edit Product{% else %}<i class="fas fa-plus text-emerald-600 mr-2"></i>New Product{% endif %}</h3>
+        </div>
+        <div class="ow-card-body">
+            <form method="post" enctype="multipart/form-data" class="space-y-5">
+                {% csrf_token %}
+
+                {% if form.errors %}
+                <div class="bg-red-50 border border-red-200 rounded-lg p-4 text-sm text-red-700">
+                    <p class="font-bold mb-1"><i class="fas fa-exclamation-circle mr-1"></i> Please fix the errors:</p>
+                    {% for field, errors in form.errors.items %}
+                    <p class="ml-4">- {{ field }}: {{ errors|join:", " }}</p>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div class="md:col-span-2">
+                        <label class="ow-label">Product Name *</label>
+                        {{ form.name }}
+                    </div>
+                    <div>
+                        <label class="ow-label">Category *</label>
+                        {{ form.category }}
+                    </div>
+                    <div>
+                        <label class="ow-label">Brand</label>
+                        {{ form.brand }}
+                    </div>
+                    <div>
+                        <label class="ow-label">Price (Rs) *</label>
+                        {{ form.price }}
+                    </div>
+                    <div>
+                        <label class="ow-label">Original Price (Rs)</label>
+                        {{ form.original_price }}
+                    </div>
+                    <div>
+                        <label class="ow-label">Stock *</label>
+                        {{ form.stock }}
+                    </div>
+                    <div>
+                        <label class="ow-label">Unit</label>
+                        {{ form.unit }}
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="ow-label">Short Description</label>
+                        {{ form.short_description }}
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="ow-label">Full Description *</label>
+                        {{ form.description }}
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="ow-label">Product Image</label>
+                        {{ form.image }}
+                        {% if editing and product.image %}
+                        <div class="mt-2">
+                            <img src="{{ product.image.url }}" alt="Current image" class="w-24 h-24 rounded-lg object-cover bg-ow-100">
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="flex items-center gap-6 md:col-span-2">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            {{ form.is_active }}
+                            <span class="text-sm font-medium text-ow-700">Active</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            {{ form.is_featured }}
+                            <span class="text-sm font-medium text-ow-700">Featured</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="flex gap-3 pt-4 border-t border-ow-100">
+                    <button type="submit" class="ow-btn ow-btn-primary"><i class="fas fa-save mr-1"></i> {% if editing %}Save Changes{% else %}Create Product{% endif %}</button>
+                    <a href="{% url 'owner_products' %}" class="ow-btn ow-btn-outline">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

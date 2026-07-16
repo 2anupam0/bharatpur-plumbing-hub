@@ -1,0 +1,25 @@
+{% extends "owner/base_owner.html" %}
+
+{% block title %}Delete Product{% endblock %}
+{% block page_title %}Delete Product{% endblock %}
+
+{% block content %}
+<div class="max-w-lg mx-auto">
+    <div class="ow-card">
+        <div class="ow-card-body text-center py-8">
+            <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-exclamation-triangle text-red-600 text-2xl"></i>
+            </div>
+            <h3 class="text-lg font-bold text-ow-900 mb-2">Delete Product?</h3>
+            <p class="text-sm text-ow-500 mb-1">Are you sure you want to delete:</p>
+            <p class="text-base font-bold text-ow-900 mb-6">"{{ product.name }}"</p>
+            <p class="text-xs text-ow-400 mb-6">This action cannot be undone. All related data will be lost.</p>
+            <form method="post" class="flex justify-center gap-3">
+                {% csrf_token %}
+                <button type="submit" class="ow-btn bg-red-600 text-white hover:bg-red-700"><i class="fas fa-trash mr-1"></i> Yes, Delete</button>
+                <a href="{% url 'owner_products' %}" class="ow-btn ow-btn-outline">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

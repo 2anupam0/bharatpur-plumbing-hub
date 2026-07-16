@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bill {{ bill.bill_number }} | {{ site_name }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', sans-serif; background: #f1f5f9; color: #1e293b; padding: 20px; }
+        .bill { max-width: 800px; margin: 0 auto; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+        .header { display: flex; justify-content: space-between; align-items: flex-start; padding: 32px; border-bottom: 2px solid #e2e8f0; }
+        .header h1 { font-size: 22px; font-weight: 800; color: #0f172a; }
+        .header p { font-size: 13px; color: #64748b; margin-top: 4px; }
+        .bill-badge { text-align: right; }
+        .bill-badge h2 { font-size: 18px; font-weight: 800; color: #2563eb; }
+        .bill-badge p { font-size: 12px; color: #64748b; margin-top: 2px; }
+        .meta { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; padding: 24px 32px; border-bottom: 1px solid #e2e8f0; }
+        .meta h3 { font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+        .meta p { font-size: 13px; color: #334155; line-height: 1.6; }
+        .meta .label { color: #64748b; }
+        table { width: 100%; border-collapse: collapse; }
+        thead th { background: #f8fafc; padding: 12px 16px; font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; text-align: left; border-bottom: 1px solid #e2e8f0; }
+        tbody td { padding: 12px 16px; font-size: 13px; border-bottom: 1px solid #f1f5f9; }
+        tbody tr:last-child td { border-bottom: none; }
+        .text-right { text-align: right; }
+        .text-center { text-align: center; }
+        .totals { padding: 24px 32px; border-top: 2px solid #e2e8f0; }
+        .totals-row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 13px; }
+        .totals-row .label { color: #64748b; }
+        .totals-row .value { font-weight: 600; color: #334155; }
+        .totals-row.grand { border-top: 2px solid #0f172a; margin-top: 8px; padding-top: 12px; }
+        .totals-row.grand .label { font-size: 16px; font-weight: 700; color: #0f172a; }
+        .totals-row.grand .value { font-size: 20px; font-weight: 800; color: #0f172a; }
+        .qr-section { padding: 24px 32px; border-top: 1px solid #e2e8f0; text-align: center; }
+        .qr-section h3 { font-size: 12px; font-weight: 700; color: #64748b; text-transform: uppercase; margin-bottom: 16px; }
+        .qr-grid { display: flex; justify-content: center; gap: 24px; flex-wrap: wrap; }
+        .qr-item { text-align: center; }
+        .qr-item img { width: 150px; height: 150px; border-radius: 8px; border: 1px solid #e2e8f0; }
+        .qr-item p { font-size: 11px; color: #64748b; margin-top: 6px; font-weight: 600; }
+        .footer { background: #f8fafc; padding: 20px 32px; text-align: center; border-top: 1px solid #e2e8f0; }
+        .footer p { font-size: 12px; color: #94a3b8; line-height: 1.6; }
+        .status-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 700; }
+        .status-paid { background: #dcfce7; color: #166534; }
+        .status-pending { background: #fef3c7; color: #92400e; }
+        .status-cancelled { background: #fee2e2; color: #991b1b; }
+        .print-btn { position: fixed; bottom: 24px; right: 24px; padding: 12px 24px; background: #2563eb; color: #fff; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 12px rgba(37,99,235,0.3); }
+        .print-btn:hover { background: #1d4ed8; }
+        @media print { body { background: #fff; padding: 0; } .bill { box-shadow: none; border-radius: 0; } .print-btn { display: none; } }
+    </style>
+</head>
+<body>
+    <div class="bill">
+        <div class="header">
+            <div>
+                <h1>{{ site_name }}</h1>
+                <p>{{ site_address }}</p>
+                <p>Phone: {{ site_phone }}</p>
+            </div>
+            <div class="bill-badge">
+                <h2>BILL / INVOICE</h2>
+                <p>{{ bill.bill_number }}</p>
+                <p style="margin-top:8px;">Date: {{ bill.created_at|date:"M d, Y" }}</p>
+                <p>Time: {{ bill.created_at|time:"h:i A" }}</p>
+                <p style="margin-top:8px;">
+                    <span class="status-badge {% if bill.status == 'paid' %}status-paid{% elif bill.status == 'cancelled' %}status-cancelled{% else %}status-pending{% endif %}">
+                        {{ bill.get_status_display }}
+                    </span>
+                </p>
+            </div>
+        </div>
+
+        <div class="meta">
+            <div>
+                <h3>Bill To</h3>
+                <p><strong>{{ bill.customer_name }}</strong></p>
+                {% if bill.customer_phone %}<p><span class="label">Phone:</span> {{ bill.customer_phone }}</p>{% endif %}
+                {% if bill.customer_address %}<p><span class="label">Address:</span> {{ bill.customer_address }}</p>{% endif %}
+            </div>
+            <div>
+                <h3>Payment Details</h3>
+                <p><span class="label">Method:</span> <strong>{{ bill.get_payment_method_display }}</strong></p>
+                <p><span class="label">Status:</span> <strong>{{ bill.get_status_display }}</strong></p>
+                {% if bill.created_by %}<p><span class="label">Created by:</span> {{ bill.created_by.username }}</p>{% endif %}
+            </div>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th style="width:40px;">#</th>
+                    <th>Item</th>
+                    <th class="text-center">Qty</th>
+                    <th class="text-right">Unit Price</th>
+                    <th class="text-right">Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in bill.items.all %}
+                <tr>
+                    <td style="color:#94a3b8;">{{ forloop.counter }}</td>
+                    <td>
+                        <strong>{{ item.product_name }}</strong>
+                        {% if item.product.brand %}<br><span style="font-size:11px;color:#94a3b8;">Brand: {{ item.product.brand }}</span>{% endif %}
+                    </td>
+                    <td class="text-center">{{ item.quantity }}</td>
+                    <td class="text-right">Rs {{ item.unit_price|floatformat:0 }}</td>
+                    <td class="text-right"><strong>Rs {{ item.total_price|floatformat:0 }}</strong></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="totals">
+            <div class="totals-row"><span class="label">Subtotal</span><span class="value">Rs {{ bill.subtotal|floatformat:0 }}</span></div>
+            {% if bill.discount_amount > 0 %}
+            <div class="totals-row"><span class="label">Discount</span><span class="value" style="color:#16a34a;">-Rs {{ bill.discount_amount|floatformat:0 }}</span></div>
+            {% endif %}
+            <div class="totals-row"><span class="label">Tax ({{ bill.tax_percent }}%)</span><span class="value">Rs {{ bill.tax_amount|floatformat:0 }}</span></div>
+            <div class="totals-row grand">
+                <span class="label">Grand Total</span>
+                <span class="value">Rs {{ bill.grand_total|floatformat:0 }}</span>
+            </div>
+        </div>
+
+        {% if qr_images %}
+        <div class="qr-section">
+            <h3>Scan QR Code to Pay</h3>
+            <div class="qr-grid">
+                {% if qr_images.esewa %}
+                <div class="qr-item">
+                    <img src="data:image/png;base64,{{ qr_images.esewa }}" alt="eSewa QR">
+                    <p>eSewa</p>
+                </div>
+                {% endif %}
+                {% if qr_images.khalti %}
+                <div class="qr-item">
+                    <img src="data:image/png;base64,{{ qr_images.khalti }}" alt="Khalti QR">
+                    <p>Khalti</p>
+                </div>
+                {% endif %}
+                {% if qr_images.bank_transfer %}
+                <div class="qr-item">
+                    <img src="data:image/png;base64,{{ qr_images.bank_transfer }}" alt="Bank Transfer QR">
+                    <p>Bank Transfer</p>
+                </div>
+                {% endif %}
+                {% if qr_images.ime_pay %}
+                <div class="qr-item">
+                    <img src="data:image/png;base64,{{ qr_images.ime_pay }}" alt="IME Pay QR">
+                    <p>IME Pay</p>
+                </div>
+                {% endif %}
+                {% if qr_images.generic %}
+                <div class="qr-item">
+                    <img src="data:image/png;base64,{{ qr_images.generic }}" alt="Payment QR">
+                    <p>QR Payment</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="footer">
+            <p><strong>Thank you for your purchase!</strong></p>
+            <p>For questions, contact us at {{ site_phone }} or visit {{ site_address }}</p>
+            <p style="margin-top:8px;color:#cbd5e1;">{{ site_name }} &mdash; Bharatpur, Chitwan, Nepal</p>
+        </div>
+    </div>
+
+    <button class="print-btn" onclick="window.print()"><i class="fas fa-print" style="margin-right:6px;"></i> Print Bill</button>
+</body>
+</html>

@@ -8,6 +8,7 @@ handler404 = "django.views.defaults.page_not_found"
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("dashboard/", include("shop.owner_urls")),
     path("", include("shop.urls")),
 ]
 

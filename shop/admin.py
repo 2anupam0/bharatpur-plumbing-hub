@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.utils.html import format_html, mark_safe
 from django.urls import reverse
-from .models import Category, Product, ContactInquiry, SiteSettings, Order, OrderItem
+from .models import Category, Product, ContactInquiry, SiteSettings, Order, OrderItem, Bill, BillItem
 
 
 @admin.register(Category)
@@ -329,6 +329,30 @@ class SiteSettingsAdmin(admin.ModelAdmin):
 
     def has_view_permission(self, request, obj=None):
         return True
+
+
+class BillItemInline(admin.TabularInline):
+    model = BillItem
+    extra = 0
+    readonly_fields = ["product", "product_name", "quantity", "unit_price", "total_price"]
+
+
+@admin.register(Bill)
+class BillAdmin(admin.ModelAdmin):
+    list_display = [
+        "bill_number", "customer_name", "grand_total",
+        "payment_method", "status", "created_at",
+    ]
+    list_filter = ["status", "payment_method"]
+    search_fields = ["bill_number", "customer_name", "customer_phone"]
+    readonly_fields = ["bill_number", "subtotal", "tax_amount", "grand_total", "created_at", "updated_at"]
+    inlines = [BillItemInline]
+    list_per_page = 20
+
+    def get_readonly_fields(self, request, obj=None):
+        if obj and obj.status in ("paid", "cancelled"):
+            return [f.name for f in Bill._meta.get_fields() if hasattr(f, "name")]
+        return self.readonly_fields
 
 
 admin.site.site_header = "Bharatpur Plumbing Hub"
