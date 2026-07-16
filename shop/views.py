@@ -77,9 +77,30 @@ def product_detail(request, slug):
         category=product.category, is_active=True
     ).exclude(pk=product.pk)[:4]
 
+    gallery_items = []
+    if product.image:
+        gallery_items.append({
+            'type': 'image',
+            'url': product.image.url,
+            'embed_url': '',
+        })
+    for img in product.additional_images.all():
+        gallery_items.append({
+            'type': 'image',
+            'url': img.image.url,
+            'embed_url': '',
+        })
+    for vid in product.videos.all():
+        gallery_items.append({
+            'type': 'video',
+            'url': vid.video_url,
+            'embed_url': vid.get_embed_url(),
+        })
+
     context = {
         "product": product,
         "related_products": related_products,
+        "gallery_items": gallery_items,
     }
     return render(request, "shop/product_detail.html", context)
 

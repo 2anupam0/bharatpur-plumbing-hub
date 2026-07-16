@@ -22,20 +22,30 @@
 <div class="max-w-7xl mx-auto px-4 py-8">
     <div class="product-detail-card">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-0">
-            <div class="product-detail-image" style="position:relative;">
-                <div id="main-display" style="width:100%;height:100%;min-height:350px;display:flex;align-items:center;justify-content:center;background:#f8f9fa;">
+            <div class="product-detail-image" style="position:relative;background:#f8f9fa;">
+                <!-- Main Gallery Display -->
+                <div id="gallery-main" style="position:relative;width:100%;min-height:400px;display:flex;align-items:center;justify-content:center;overflow:hidden;">
                     {% if product.image %}
-                    <img id="main-image" src="{{ product.image.url }}" alt="{{ product.name }}" style="max-width:100%;max-height:100%;object-fit:contain;">
+                    <img id="gallery-active" data-type="image" data-src="{{ product.image.url }}" src="{{ product.image.url }}" alt="{{ product.name }}" style="width:100%;height:400px;object-fit:contain;display:block;transition:opacity 0.3s;">
                     {% elif product.videos.all %}
                     {% with vid=product.videos.all.0 %}
-                    <iframe src="{{ vid.get_embed_url }}" style="width:100%;height:100%;min-height:350px;border:none;" allowfullscreen></iframe>
+                    <iframe id="gallery-active" data-type="video" data-src="{{ vid.get_embed_url }}" src="{{ vid.get_embed_url }}" style="width:100%;height:400px;border:none;" allowfullscreen></iframe>
                     {% endwith %}
                     {% else %}
-                    <div class="text-center">
+                    <div class="text-center py-16">
                         <i class="fas fa-image text-6xl text-gray-200 mb-3"></i>
                         <p class="text-sm text-gray-400">No image available</p>
                     </div>
                     {% endif %}
+                    <!-- Arrow Navigation -->
+                    <button id="prev-btn" onclick="galleryNav(-1)" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.9);border:none;border-radius:50%;width:40px;height:40px;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.15);z-index:5;transition:background 0.2s;" onmouseover="this.style.background='#fff'" onmouseout="this.style.background='rgba(255,255,255,0.9)'">
+                        <i class="fas fa-chevron-left text-gray-700"></i>
+                    </button>
+                    <button id="next-btn" onclick="galleryNav(1)" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.9);border:none;border-radius:50%;width:40px;height:40px;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.15);z-index:5;transition:background 0.2s;" onmouseover="this.style.background='#fff'" onmouseout="this.style.background='rgba(255,255,255,0.9)'">
+                        <i class="fas fa-chevron-right text-gray-700"></i>
+                    </button>
+                    <!-- Counter -->
+                    <div id="gallery-counter" style="position:absolute;bottom:10px;right:14px;background:rgba(0,0,0,0.55);color:#fff;font-size:12px;padding:4px 10px;border-radius:12px;z-index:5;">1 / {{ gallery_items|length }}</div>
                 </div>
                 {% if product.has_discount %}
                 <span class="badge-discount" style="font-size:13px;padding:6px 14px;">Save {{ product.discount_percentage }}%</span>
@@ -43,29 +53,23 @@
                 {% if product.is_featured %}
                 <span class="badge-featured" style="font-size:13px;padding:6px 14px;"><i class="fas fa-star"></i></span>
                 {% endif %}
-                {% if product.additional_images.all or product.videos.all %}
-                <div id="gallery-strip" style="display:flex;gap:8px;padding:10px;overflow-x:auto;scroll-behavior:smooth;background:#fff;border-top:1px solid #eee;">
-                    <div class="gallery-thumb active" onclick="showGalleryItem('image', '{{ product.image.url }}', this)" style="flex:0 0 64px;height:64px;border-radius:8px;overflow:hidden;border:2px solid #2563eb;cursor:pointer;">
-                        {% if product.image %}
-                        <img src="{{ product.image.url }}" alt="Main" style="width:100%;height:100%;object-fit:cover;">
+                <!-- Thumbnail Strip -->
+                <div id="gallery-thumbs" style="display:flex;gap:8px;padding:10px 12px;overflow-x:auto;scroll-behavior:smooth;background:#fff;border-top:1px solid #eee;scrollbar-width:thin;">
+                    {% for item in gallery_items %}
+                    <div class="gallery-thumb {% if forloop.first %}active{% endif %}" data-index="{{ forloop.counter0 }}" onclick="galleryGoTo({{ forloop.counter0 }})" style="flex:0 0 68px;height:68px;border-radius:8px;overflow:hidden;border:2px solid {% if forloop.first %}#2563eb{% else %}transparent{% endif %};cursor:pointer;position:relative;transition:border-color 0.2s;box-shadow:0 1px 3px rgba(0,0,0,0.08);">
+                        {% if item.type == 'image' %}
+                        <img src="{{ item.url }}" alt="" style="width:100%;height:100%;object-fit:cover;">
                         {% else %}
-                        <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#e5e7eb;"><i class="fas fa-image text-gray-400"></i></div>
-                        {% endif %}
-                    </div>
-                    {% for img in product.additional_images.all %}
-                    <div class="gallery-thumb" onclick="showGalleryItem('image', '{{ img.image.url }}', this)" style="flex:0 0 64px;height:64px;border-radius:8px;overflow:hidden;border:2px solid transparent;cursor:pointer;">
-                        <img src="{{ img.image.url }}" alt="{{ img.caption }}" style="width:100%;height:100%;object-fit:cover;">
-                    </div>
-                    {% endfor %}
-                    {% for vid in product.videos.all %}
-                    <div class="gallery-thumb" onclick="showGalleryItem('video', '{{ vid.get_embed_url }}', this)" style="flex:0 0 64px;height:64px;border-radius:8px;overflow:hidden;border:2px solid transparent;cursor:pointer;position:relative;">
-                        <div style="width:100%;height:100%;background:#1a1a2e;display:flex;align-items:center;justify-content:center;">
-                            <i class="fab fa-youtube text-red-500 text-lg"></i>
+                        <div style="width:100%;height:100%;background:linear-gradient(135deg,#1a1a2e,#16213e);display:flex;align-items:center;justify-content:center;">
+                            <i class="fab fa-youtube text-red-500 text-xl"></i>
                         </div>
+                        {% endif %}
+                        {% if item.type == 'video' %}
+                        <div style="position:absolute;bottom:2px;right:2px;background:rgba(0,0,0,0.6);border-radius:3px;padding:1px 4px;"><i class="fas fa-play text-white" style="font-size:8px;"></i></div>
+                        {% endif %}
                     </div>
                     {% endfor %}
                 </div>
-                {% endif %}
             </div>
 
             <div class="p-6 lg:p-8 flex flex-col">
@@ -183,15 +187,61 @@
 
 {% block extra_js %}
 <script>
-function showGalleryItem(type, src, thumb) {
-    const display = document.getElementById('main-display');
-    document.querySelectorAll('.gallery-thumb').forEach(t => t.style.borderColor = 'transparent');
-    thumb.style.borderColor = '#2563eb';
-    if (type === 'image') {
-        display.innerHTML = '<img id="main-image" src="' + src + '" alt="Product" style="max-width:100%;max-height:100%;object-fit:contain;">';
+const galleryItems = [{% for item in gallery_items %}{type:"{{ item.type }}",url:"{{ item.url }}",embedUrl:"{{ item.embed_url }}"}{% if not forloop.last %},{% endif %}{% endfor %}];
+let galleryIndex = 0;
+const mainEl = document.getElementById('gallery-main');
+const counterEl = document.getElementById('gallery-counter');
+const thumbs = document.querySelectorAll('.gallery-thumb');
+const total = galleryItems.length;
+
+function galleryGoTo(idx) {
+    if (idx < 0 || idx >= total) return;
+    galleryIndex = idx;
+    const item = galleryItems[idx];
+    const active = document.getElementById('gallery-active');
+    const newEl = document.createElement(item.type === 'video' ? 'iframe' : 'img');
+    newEl.id = 'gallery-active';
+    newEl.setAttribute('data-type', item.type);
+    newEl.setAttribute('data-src', item.url);
+    if (item.type === 'video') {
+        newEl.src = item.embedUrl;
+        newEl.style.cssText = 'width:100%;height:400px;border:none;';
+        newEl.allowFullscreen = true;
     } else {
-        display.innerHTML = '<iframe src="' + src + '" style="width:100%;height:100%;min-height:350px;border:none;" allowfullscreen></iframe>';
+        newEl.src = item.url;
+        newEl.alt = '{{ product.name }}';
+        newEl.style.cssText = 'width:100%;height:400px;object-fit:contain;display:block;transition:opacity 0.3s;';
+    }
+    active.replaceWith(newEl);
+    counterEl.textContent = (idx + 1) + ' / ' + total;
+    thumbs.forEach((t, i) => {
+        t.style.borderColor = i === idx ? '#2563eb' : 'transparent';
+    });
+    const thumbEl = thumbs[idx];
+    if (thumbEl) {
+        const strip = document.getElementById('gallery-thumbs');
+        const scrollLeft = thumbEl.offsetLeft - strip.offsetWidth / 2 + thumbEl.offsetWidth / 2;
+        strip.scrollTo({ left: scrollLeft, behavior: 'smooth' });
     }
 }
+
+function galleryNav(dir) {
+    let next = galleryIndex + dir;
+    if (next < 0) next = total - 1;
+    if (next >= total) next = 0;
+    galleryGoTo(next);
+}
+
+let touchStartX = 0;
+mainEl.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; }, { passive: true });
+mainEl.addEventListener('touchend', e => {
+    const diff = touchStartX - e.changedTouches[0].screenX;
+    if (Math.abs(diff) > 40) galleryNav(diff > 0 ? 1 : -1);
+}, { passive: true });
+
+document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowLeft') galleryNav(-1);
+    if (e.key === 'ArrowRight') galleryNav(1);
+});
 </script>
 {% endblock %}
