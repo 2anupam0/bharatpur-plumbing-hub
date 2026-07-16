@@ -15,6 +15,9 @@
 
 {% block branding %}
     <div id="branding">
+        <button class="mobile-menu-toggle" onclick="toggleSidebar()" aria-label="Toggle menu">
+            <i class="fas fa-bars"></i>
+        </button>
         <h1>{{ site_header }}
             <span class="sub">Bharatpur, Chitwan</span>
         </h1>
@@ -23,11 +26,24 @@
 
 {% block user-tools %}
     <div id="user-tools">
-        <span>Hello, {{ user.get_short_name|default:user.username }}</span>
-        {% if user.has_usable_password %}
-        <a href="{% url 'admin:password_change' %}"><i class="fas fa-key"></i> Password</a>
-        {% endif %}
-        <a href="{% url 'admin:logout' %}" class="logout-link"><i class="fas fa-sign-out-alt"></i> Log out</a>
+        <div class="admin-dropdown" id="userDropdown">
+            <button class="admin-dropdown-btn" onclick="toggleDropdown(event)">
+                <span class="avatar">{{ user.get_short_name|default:user.username|first }}</span>
+                {{ user.get_short_name|default:user.username }}
+                <i class="fas fa-chevron-down"></i>
+            </button>
+            <div class="admin-dropdown-menu">
+                <a href="{% url 'home' %}" target="_blank"><i class="fas fa-external-link-alt"></i> View Website</a>
+                <a href="{% url 'shop:dashboard' %}" target="_blank"><i class="fas fa-tachometer-alt"></i> Owner Dashboard</a>
+                <div class="divider"></div>
+                {% if user.has_usable_password %}
+                <a href="{% url 'admin:password_change' %}"><i class="fas fa-key"></i> Change Password</a>
+                {% endif %}
+                <a href="{% url 'admin:shop_sitesettings_changelist' %}"><i class="fas fa-cog"></i> Site Settings</a>
+                <div class="divider"></div>
+                <a href="{% url 'admin:logout' %}" class="danger"><i class="fas fa-sign-out-alt"></i> Log out</a>
+            </div>
+        </div>
     </div>
 {% endblock %}
 
@@ -46,3 +62,43 @@
         <a href="https://wa.me/" target="_blank"><i class="fab fa-whatsapp"></i> WhatsApp</a>
     </div>
 {% endblock %}
+
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+<script>
+function toggleDropdown(e) {
+    e.stopPropagation();
+    document.getElementById('userDropdown').classList.toggle('open');
+}
+
+document.addEventListener('click', function() {
+    document.getElementById('userDropdown').classList.remove('open');
+});
+
+function toggleSidebar() {
+    var sidebar = document.getElementById('nav-sidebar');
+    var overlay = document.getElementById('sidebarOverlay');
+    sidebar.classList.toggle('open');
+    overlay.classList.toggle('active');
+    document.body.style.overflow = sidebar.classList.contains('open') ? 'hidden' : '';
+}
+
+function closeSidebar() {
+    var sidebar = document.getElementById('nav-sidebar');
+    var overlay = document.getElementById('sidebarOverlay');
+    sidebar.classList.remove('open');
+    overlay.classList.remove('active');
+    document.body.style.overflow = '';
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    var sidebar = document.getElementById('nav-sidebar');
+    if (sidebar) {
+        sidebar.addEventListener('click', function(e) {
+            if (e.target.tagName === 'A' && window.innerWidth <= 1024) {
+                closeSidebar();
+            }
+        });
+    }
+});
+</script>
