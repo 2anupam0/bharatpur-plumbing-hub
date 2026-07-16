@@ -32,8 +32,8 @@
 
     <div class="flex min-h-screen">
         <!-- Sidebar -->
-        <aside id="sidebar" class="ow-sidebar w-64 bg-ow-900 text-white flex-shrink-0 fixed h-full z-30 transform -translate-x-full lg:translate-x-0 transition-transform">
-            <div class="p-5 border-b border-ow-700/50">
+        <aside id="sidebar" class="ow-sidebar w-64 bg-ow-900 text-white flex-shrink-0 fixed h-full z-30 transform -translate-x-full lg:translate-x-0 transition-transform overflow-y-auto">
+            <div class="p-5 border-b border-ow-700">
                 <a href="{% url 'owner_dashboard' %}" class="flex items-center gap-3">
                     <div class="w-9 h-9 bg-primary-600 rounded-lg flex items-center justify-center">
                         <i class="fas fa-wrench text-white text-sm"></i>
@@ -52,27 +52,47 @@
                 <a href="{% url 'owner_products' %}" class="ow-nav-link {% if 'product' in request.resolver_match.url_name %}active{% endif %}">
                     <i class="fas fa-box w-5 text-center"></i> Products
                 </a>
+                <a href="/admin/shop/category/" class="ow-nav-link {% if 'category' in request.resolver_match.url_name %}active{% endif %}">
+                    <i class="fas fa-tags w-5 text-center"></i> Categories
+                </a>
                 <a href="{% url 'owner_orders' %}" class="ow-nav-link {% if 'order' in request.resolver_match.url_name %}active{% endif %}">
                     <i class="fas fa-shopping-cart w-5 text-center"></i> Orders
                 </a>
 
-                <p class="text-[10px] font-bold text-ow-500 uppercase tracking-wider px-3 mb-2 mt-5">Billing</p>
-                <a href="{% url 'owner_bills' %}" class="ow-nav-link {% if 'bill' in request.resolver_match.url_name %}active{% endif %}">
+                <div class="border-t border-ow-700 my-3"></div>
+
+                <p class="text-[10px] font-bold text-ow-500 uppercase tracking-wider px-3 mb-2">Billing</p>
+                <a href="{% url 'owner_bills' %}" class="ow-nav-link {% if 'bill' in request.resolver_match.url_name and request.resolver_match.url_name != 'owner_bill_create' %}active{% endif %}">
                     <i class="fas fa-file-invoice-dollar w-5 text-center"></i> Bills
                 </a>
                 <a href="{% url 'owner_bill_create' %}" class="ow-nav-link {% if request.resolver_match.url_name == 'owner_bill_create' %}active{% endif %}">
                     <i class="fas fa-plus-circle w-5 text-center"></i> Create Bill
                 </a>
 
-                <p class="text-[10px] font-bold text-ow-500 uppercase tracking-wider px-3 mb-2 mt-5">Quick Links</p>
+                <div class="border-t border-ow-700 my-3"></div>
+
+                <p class="text-[10px] font-bold text-ow-500 uppercase tracking-wider px-3 mb-2">Administration</p>
+                <a href="/admin/shop/contactinquiry/" class="ow-nav-link">
+                    <i class="fas fa-envelope w-5 text-center"></i> Inquiries
+                </a>
+                <a href="/admin/shop/sitesettings/" class="ow-nav-link">
+                    <i class="fas fa-cog w-5 text-center"></i> Site Settings
+                </a>
+                <a href="/admin/" class="ow-nav-link">
+                    <i class="fas fa-shield-halved w-5 text-center"></i> Django Admin
+                </a>
+
+                <div class="border-t border-ow-700 my-3"></div>
+
+                <p class="text-[10px] font-bold text-ow-500 uppercase tracking-wider px-3 mb-2">Preview</p>
                 <a href="{% url 'home' %}" class="ow-nav-link" target="_blank">
                     <i class="fas fa-globe w-5 text-center"></i> View Website
                 </a>
-                <a href="/admin/" class="ow-nav-link">
-                    <i class="fas fa-cog w-5 text-center"></i> Django Admin
+                <a href="/products/" class="ow-nav-link" target="_blank">
+                    <i class="fas fa-store w-5 text-center"></i> Product Catalog
                 </a>
             </nav>
-            <div class="p-4 border-t border-ow-700/50">
+            <div class="p-4 border-t border-ow-700">
                 <div class="flex items-center gap-3">
                     <div class="w-8 h-8 bg-primary-600 rounded-full flex items-center justify-center text-xs font-bold">
                         {{ request.user.username|first|upper }}
