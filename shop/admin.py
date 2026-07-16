@@ -188,7 +188,7 @@ class OrderItemInline(admin.TabularInline):
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
     list_display = [
-        "order_number", "customer_name", "customer_phone",
+        "order_number_link", "customer_name", "customer_phone",
         "grand_total_display", "payment_status_badge",
         "order_status_badge", "source_badge", "created_at",
     ]
@@ -205,6 +205,12 @@ class OrderAdmin(admin.ModelAdmin):
     date_hierarchy = "created_at"
     inlines = [OrderItemInline]
     save_on_top = True
+
+    def order_number_link(self, obj):
+        url = f"/dashboard/orders/{obj.pk}/"
+        return format_html('<a href="{}" style="color:#2563eb;font-weight:600;text-decoration:none;">{}</a>', url, obj.order_number)
+    order_number_link.short_description = "Order"
+    order_number_link.allow_tags = True
 
     fieldsets = (
         ("Order Info", {
@@ -340,7 +346,7 @@ class BillItemInline(admin.TabularInline):
 @admin.register(Bill)
 class BillAdmin(admin.ModelAdmin):
     list_display = [
-        "bill_number", "customer_name", "grand_total",
+        "bill_number_link", "customer_name", "grand_total",
         "payment_method", "status", "created_at",
     ]
     list_filter = ["status", "payment_method"]
@@ -348,6 +354,12 @@ class BillAdmin(admin.ModelAdmin):
     readonly_fields = ["bill_number", "subtotal", "tax_amount", "grand_total", "created_at", "updated_at"]
     inlines = [BillItemInline]
     list_per_page = 20
+
+    def bill_number_link(self, obj):
+        url = f"/dashboard/bills/{obj.pk}/"
+        return format_html('<a href="{}" style="color:#2563eb;font-weight:600;text-decoration:none;">{}</a>', url, obj.bill_number)
+    bill_number_link.short_description = "Bill Number"
+    bill_number_link.allow_tags = True
 
     def get_readonly_fields(self, request, obj=None):
         if obj and obj.status in ("paid", "cancelled"):
