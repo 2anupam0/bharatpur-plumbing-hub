@@ -1,12 +1,13 @@
 from django import template
 from django.db.models import Q, Count, F
-from shop.models import Product, Category, ContactInquiry, SiteSettings
+from shop.models import Product, Category, ContactInquiry, SiteSettings, Order, Bill
 
 register = template.Library()
 
 
 @register.simple_tag
 def get_admin_stats():
+    from django.contrib.auth.models import User
     products = Product.objects.all()
     active_products = products.filter(is_active=True)
     inquiries = ContactInquiry.objects.all()
@@ -25,6 +26,10 @@ def get_admin_stats():
         ).count(),
         "inactive_products": products.filter(is_active=False).count(),
         "whatsapp_number": settings.whatsapp_number,
+        "total_orders": Order.objects.count(),
+        "pending_orders": Order.objects.filter(status="pending").count(),
+        "total_bills": Bill.objects.count(),
+        "total_users": User.objects.count(),
     }
 
 

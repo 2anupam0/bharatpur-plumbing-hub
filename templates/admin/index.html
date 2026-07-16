@@ -293,38 +293,119 @@
 
     <div class="app-list-section">
         <h2><span class="icon"><i class="fas fa-layer-group"></i></span> Administration</h2>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(300px, 1fr));gap:16px;">
-            <div class="dashboard-card" style="margin-bottom:0;">
-                <h2 style="border-bottom-color:var(--a-success);"><span class="icon" style="background:var(--a-success-light);color:var(--a-success);"><i class="fas fa-store"></i></span> Shop</h2>
-                <div style="padding:4px 0;">
-                    <a href="{% url 'admin:shop_category_changelist' %}" class="dash-row" style="text-decoration:none;color:var(--a-text);font-weight:500;font-size:13px;cursor:pointer;padding:11px 0;">
-                        <i class="fas fa-tags" style="color:var(--a-primary);width:18px;"></i> Categories
-                        <span class="dash-badge dash-badge-blue" style="margin-left:auto;">{{ stats.total_categories }}</span>
-                    </a>
-                    <a href="{% url 'admin:shop_product_changelist' %}" class="dash-row" style="text-decoration:none;color:var(--a-text);font-weight:500;font-size:13px;cursor:pointer;padding:11px 0;">
-                        <i class="fas fa-box" style="color:var(--a-primary);width:18px;"></i> Products
-                        <span class="dash-badge dash-badge-blue" style="margin-left:auto;">{{ stats.total_products }}</span>
-                    </a>
-                    <a href="{% url 'admin:shop_contactinquiry_changelist' %}" class="dash-row" style="text-decoration:none;color:var(--a-text);font-weight:500;font-size:13px;cursor:pointer;padding:11px 0;">
-                        <i class="fas fa-envelope" style="color:var(--a-warning);width:18px;"></i> Contact Inquiries
-                        <span class="dash-badge dash-badge-amber" style="margin-left:auto;">{{ stats.total_inquiries }}</span>
-                    </a>
-                    <a href="{% url 'admin:shop_sitesettings_changelist' %}" class="dash-row" style="text-decoration:none;color:var(--a-text);font-weight:500;font-size:13px;cursor:pointer;padding:11px 0;border-bottom:none;">
-                        <i class="fas fa-cog" style="color:var(--a-info);width:18px;"></i> Site Settings
-                    </a>
+
+        <div class="model-cards-grid">
+
+            <div class="model-card model-card-blue">
+                <div class="model-card-header">
+                    <div class="model-card-icon" style="background:var(--a-primary-light);color:var(--a-primary);"><i class="fas fa-box"></i></div>
+                    <div class="model-card-info">
+                        <h3>Products</h3>
+                        <span class="model-card-count">{{ stats.total_products }} items</span>
+                    </div>
+                </div>
+                <div class="model-card-actions">
+                    <a href="{% url 'admin:shop_product_add' %}" class="model-action-add"><i class="fas fa-plus"></i> Add</a>
+                    <a href="{% url 'admin:shop_product_changelist' %}" class="model-action-view"><i class="fas fa-list"></i> View</a>
                 </div>
             </div>
-            <div class="dashboard-card" style="margin-bottom:0;">
-                <h2 style="border-bottom-color:var(--a-warning);"><span class="icon" style="background:var(--a-warning-light);color:var(--a-warning);"><i class="fas fa-shield-alt"></i></span> Authentication</h2>
-                <div style="padding:4px 0;">
-                    <a href="{% url 'admin:auth_user_changelist' %}" class="dash-row" style="text-decoration:none;color:var(--a-text);font-weight:500;font-size:13px;cursor:pointer;padding:11px 0;">
-                        <i class="fas fa-users" style="color:var(--a-primary);width:18px;"></i> Users
-                    </a>
-                    <a href="{% url 'admin:auth_group_changelist' %}" class="dash-row" style="text-decoration:none;color:var(--a-text);font-weight:500;font-size:13px;cursor:pointer;padding:11px 0;border-bottom:none;">
-                        <i class="fas fa-user-shield" style="color:var(--a-info);width:18px;"></i> Groups
-                    </a>
+
+            <div class="model-card model-card-green">
+                <div class="model-card-header">
+                    <div class="model-card-icon" style="background:var(--a-success-light);color:var(--a-success);"><i class="fas fa-tags"></i></div>
+                    <div class="model-card-info">
+                        <h3>Categories</h3>
+                        <span class="model-card-count">{{ stats.total_categories }} items</span>
+                    </div>
+                </div>
+                <div class="model-card-actions">
+                    <a href="{% url 'admin:shop_category_add' %}" class="model-action-add"><i class="fas fa-plus"></i> Add</a>
+                    <a href="{% url 'admin:shop_category_changelist' %}" class="model-action-view"><i class="fas fa-list"></i> View</a>
                 </div>
             </div>
+
+            <div class="model-card model-card-orange">
+                <div class="model-card-header">
+                    <div class="model-card-icon" style="background:var(--a-warning-light);color:var(--a-warning);"><i class="fas fa-file-invoice"></i></div>
+                    <div class="model-card-info">
+                        <h3>Orders</h3>
+                        <span class="model-card-count">{{ stats.total_orders }} total</span>
+                    </div>
+                </div>
+                <div class="model-card-actions">
+                    <a href="{% url 'admin:shop_order_add' %}" class="model-action-add"><i class="fas fa-plus"></i> Add</a>
+                    <a href="{% url 'admin:shop_order_changelist' %}" class="model-action-view"><i class="fas fa-list"></i> View</a>
+                </div>
+            </div>
+
+            <div class="model-card model-card-cyan">
+                <div class="model-card-header">
+                    <div class="model-card-icon" style="background:var(--a-info-light);color:var(--a-info);"><i class="fas fa-receipt"></i></div>
+                    <div class="model-card-info">
+                        <h3>Bills</h3>
+                        <span class="model-card-count">{{ stats.total_bills }} total</span>
+                    </div>
+                </div>
+                <div class="model-card-actions">
+                    <a href="{% url 'admin:shop_bill_add' %}" class="model-action-add"><i class="fas fa-plus"></i> Add</a>
+                    <a href="{% url 'admin:shop_bill_changelist' %}" class="model-action-view"><i class="fas fa-list"></i> View</a>
+                </div>
+            </div>
+
+            <div class="model-card model-card-amber">
+                <div class="model-card-header">
+                    <div class="model-card-icon" style="background:#fef3c7;color:#d97706;"><i class="fas fa-envelope-open-text"></i></div>
+                    <div class="model-card-info">
+                        <h3>Contact Inquiries</h3>
+                        <span class="model-card-count">{{ stats.total_inquiries }} total</span>
+                    </div>
+                </div>
+                <div class="model-card-actions">
+                    <a href="{% url 'admin:shop_contactinquiry_changelist' %}" class="model-action-view" style="width:100%;text-align:center;"><i class="fas fa-list"></i> View All</a>
+                </div>
+            </div>
+
+            <div class="model-card model-card-indigo">
+                <div class="model-card-header">
+                    <div class="model-card-icon" style="background:#eef2ff;color:#4f46e5;"><i class="fas fa-cog"></i></div>
+                    <div class="model-card-info">
+                        <h3>Site Settings</h3>
+                        <span class="model-card-count">Configure shop</span>
+                    </div>
+                </div>
+                <div class="model-card-actions">
+                    <a href="{% url 'admin:shop_sitesettings_changelist' %}" class="model-action-view" style="width:100%;text-align:center;background:#eef2ff;color:#4f46e5;border-color:#c7d2fe;"><i class="fas fa-cog"></i> Configure</a>
+                </div>
+            </div>
+
+            <div class="model-card model-card-slate">
+                <div class="model-card-header">
+                    <div class="model-card-icon" style="background:var(--a-border-light);color:var(--a-text-secondary);"><i class="fas fa-users"></i></div>
+                    <div class="model-card-info">
+                        <h3>Users</h3>
+                        <span class="model-card-count">{{ stats.total_users }} users</span>
+                    </div>
+                </div>
+                <div class="model-card-actions">
+                    <a href="{% url 'admin:auth_user_add' %}" class="model-action-add" style="background:var(--a-text-secondary);"><i class="fas fa-plus"></i> Add</a>
+                    <a href="{% url 'admin:auth_user_changelist' %}" class="model-action-view"><i class="fas fa-list"></i> View</a>
+                </div>
+            </div>
+
+            <div class="model-card model-card-slate">
+                <div class="model-card-header">
+                    <div class="model-card-icon" style="background:var(--a-border-light);color:var(--a-text-secondary);"><i class="fas fa-user-shield"></i></div>
+                    <div class="model-card-info">
+                        <h3>Groups</h3>
+                        <span class="model-card-count">Access control</span>
+                    </div>
+                </div>
+                <div class="model-card-actions">
+                    <a href="{% url 'admin:auth_group_add' %}" class="model-action-add" style="background:var(--a-text-secondary);"><i class="fas fa-plus"></i> Add</a>
+                    <a href="{% url 'admin:auth_group_changelist' %}" class="model-action-view"><i class="fas fa-list"></i> View</a>
+                </div>
+            </div>
+
         </div>
     </div>
 
