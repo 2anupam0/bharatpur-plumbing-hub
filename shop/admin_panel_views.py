@@ -420,12 +420,21 @@ def admin_inquiry_detail(request, pk):
 def admin_settings(request):
     site_settings = SiteSettings.load()
     if request.method == "POST":
+        site_settings.shop_name = request.POST.get("shop_name", site_settings.shop_name)
+        site_settings.shop_tagline = request.POST.get("shop_tagline", site_settings.shop_tagline)
+        site_settings.shop_phone = request.POST.get("shop_phone", site_settings.shop_phone)
+        site_settings.shop_email = request.POST.get("shop_email", site_settings.shop_email)
+        site_settings.shop_address = request.POST.get("shop_address", site_settings.shop_address)
+        site_settings.shop_opening_hours = request.POST.get("shop_opening_hours", site_settings.shop_opening_hours)
         site_settings.whatsapp_number = request.POST.get("whatsapp_number", site_settings.whatsapp_number)
         site_settings.free_delivery_threshold = request.POST.get("free_delivery_threshold", site_settings.free_delivery_threshold)
         site_settings.delivery_fee = request.POST.get("delivery_fee", site_settings.delivery_fee)
         site_settings.tax_percent = request.POST.get("tax_percent", site_settings.tax_percent)
         site_settings.announcement_text = request.POST.get("announcement_text", "")
         site_settings.save()
+        from shop.context_processors import _site_settings_cache
+        import shop.context_processors as cp
+        cp._site_settings_cache = None
         messages.success(request, "Site settings updated successfully.")
         return redirect("admin_panel_settings")
     return render(request, "admin_panel/settings.html", {"site_settings": site_settings})

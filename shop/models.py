@@ -182,6 +182,12 @@ class ContactInquiry(models.Model):
 
 
 class SiteSettings(models.Model):
+    shop_name = models.CharField(max_length=100, default="WONTA SUPPLIERS")
+    shop_tagline = models.CharField(max_length=255, default="All Plumbing & Hardware Materials in Bharatpur")
+    shop_phone = models.CharField(max_length=20, default="+9779800000000")
+    shop_email = models.EmailField(default="info@bharatpurplumbing.com")
+    shop_address = models.CharField(max_length=255, default="Bharatpur 44200, Nepal")
+    shop_opening_hours = models.CharField(max_length=255, default="Sun-Fri: 8:00 AM - 7:00 PM | Sat: 9:00 AM - 5:00 PM")
     whatsapp_number = models.CharField(
         max_length=20, default="+9779800000000",
         help_text="WhatsApp number with country code"

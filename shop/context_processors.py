@@ -17,14 +17,15 @@ def site_context(request):
         cart_count = sum(item["quantity"] for item in cart.values())
 
     return {
-        "site_name": getattr(settings, "SITE_NAME", "ARUN Suppliers"),
-        "site_tagline": getattr(settings, "SITE_TAGLINE", "All Plumbing & Hardware Materials"),
-        "site_phone": getattr(settings, "SITE_PHONE", "+9779800000000"),
-        "site_email": getattr(settings, "SITE_EMAIL", "info@bharatpurplumbing.com"),
-        "site_address": getattr(settings, "SITE_ADDRESS", "Bharatpur, Chitwan, Nepal"),
-        "site_opening_hours": getattr(settings, "SITE_OPENING_HOURS", "Sun-Fri: 8AM-7PM"),
+        "site_name": site_settings.shop_name,
+        "site_tagline": site_settings.shop_tagline,
+        "site_phone": site_settings.shop_phone,
+        "site_email": site_settings.shop_email,
+        "site_address": site_settings.shop_address,
+        "site_opening_hours": site_settings.shop_opening_hours,
         "whatsapp_number": site_settings.whatsapp_number,
         "free_delivery_threshold": site_settings.free_delivery_threshold,
+        "delivery_fee": site_settings.delivery_fee,
         "announcement_text": site_settings.announcement_text,
         "cart_count": cart_count,
     }

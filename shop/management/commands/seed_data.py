@@ -16,12 +16,33 @@ class Command(BaseCommand):
         SiteSettings.objects.get_or_create(
             pk=1,
             defaults={
+                "shop_name": "WONTA SUPPLIERS",
+                "shop_tagline": "All Plumbing & Hardware Materials in Bharatpur",
+                "shop_phone": "+9779800000000",
+                "shop_email": "info@bharatpurplumbing.com",
+                "shop_address": "Bharatpur 44200, Nepal",
+                "shop_opening_hours": "Sun-Fri: 8:00 AM - 7:00 PM | Sat: 9:00 AM - 5:00 PM",
                 "whatsapp_number": "+9779800000000",
                 "free_delivery_threshold": 5000,
                 "delivery_fee": 150,
                 "announcement_text": "Free delivery on orders above Rs 5,000!",
             },
         )
+        s = SiteSettings.objects.get(pk=1)
+        updated = False
+        for field, default in [
+            ("shop_name", "WONTA SUPPLIERS"),
+            ("shop_tagline", "All Plumbing & Hardware Materials in Bharatpur"),
+            ("shop_phone", "+9779800000000"),
+            ("shop_email", "info@bharatpurplumbing.com"),
+            ("shop_address", "Bharatpur 44200, Nepal"),
+            ("shop_opening_hours", "Sun-Fri: 8:00 AM - 7:00 PM | Sat: 9:00 AM - 5:00 PM"),
+        ]:
+            if not getattr(s, field):
+                setattr(s, field, default)
+                updated = True
+        if updated:
+            s.save()
 
         categories_data = [
             {"name": "Pipes", "slug": "pipes", "icon": "🔧", "sort_order": 1,
