@@ -69,6 +69,27 @@
     {% get_recent_inquiries as recent_inquiries %}
     {% get_category_stats as category_stats %}
 
+    <div class="admin-welcome">
+        <div class="admin-welcome-text">
+            <h2>Welcome back, {{ user.get_short_name|default:user.username }}! 🔧</h2>
+            <p>Here's what's happening with Bharatpur Plumbing Hub today.</p>
+        </div>
+        <div class="admin-welcome-stats">
+            <div class="admin-welcome-stat">
+                <span class="num">{{ stats.total_products }}</span>
+                <span class="lbl">Products</span>
+            </div>
+            <div class="admin-welcome-stat">
+                <span class="num">{{ stats.total_categories }}</span>
+                <span class="lbl">Categories</span>
+            </div>
+            <div class="admin-welcome-stat">
+                <span class="num">{{ stats.total_inquiries }}</span>
+                <span class="lbl">Inquiries</span>
+            </div>
+        </div>
+    </div>
+
     <div class="admin-stats-grid">
         <div class="admin-stat-card stat-blue">
             <div class="stat-icon"><i class="fas fa-box"></i></div>
