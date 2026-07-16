@@ -80,12 +80,79 @@ document.addEventListener("DOMContentLoaded", function () {
     // Smooth scroll for anchor links
     document.querySelectorAll('a[href^="#"]').forEach(function (anchor) {
         anchor.addEventListener("click", function (e) {
-            const target = document.querySelector(this.getAttribute("href"));
+            var target = document.querySelector(this.getAttribute("href"));
             if (target) {
                 e.preventDefault();
                 target.scrollIntoView({ behavior: "smooth", block: "start" });
             }
         });
+    });
+
+});
+
+function addToCart(productId, btn) {
+    if (btn.classList.contains("added")) return;
+    var formData = new FormData();
+    formData.append("quantity", 1);
+    var csrfToken = document.querySelector("[name=csrfmiddlewaretoken]");
+    if (!csrfToken) {
+        var cookies = document.cookie.split(";");
+        for (var i = 0; i < cookies.length; i++) {
+            var c = cookies[i].trim();
+            if (c.startsWith("csrftoken=")) {
+                csrfToken = { value: c.substring("csrftoken=".length) };
+                break;
+            }
+        }
+    }
+    fetch("/cart/add/" + productId + "/", {
+        method: "POST",
+        headers: {
+            "X-Requested-With": "XMLHttpRequest",
+            "X-CSRFToken": csrfToken ? csrfToken.value : ""
+        },
+        body: formData
+    })
+    .then(function(resp) { return resp.json(); })
+    .then(function(data) {
+        if (data.success) {
+            btn.classList.add("added");
+            btn.innerHTML = '<i class="fas fa-check"></i> Added!';
+            var badge = document.getElementById("cart-count-badge");
+            if (badge) {
+                badge.textContent = data.cart_count;
+                badge.style.display = "flex";
+            }
+            var mobileBadge = document.getElementById("cart-count-mobile");
+            if (mobileBadge) {
+                mobileBadge.textContent = "(" + data.cart_count + ")";
+            }
+            setTimeout(function() {
+                btn.classList.remove("added");
+                btn.innerHTML = '<i class="fas fa-cart-plus"></i> Add to Cart';
+            }, 1500);
+        }
+    })
+    .catch(function() {
+        var form = document.createElement("form");
+        form.method = "POST";
+        form.action = "/cart/add/" + productId + "/";
+        var input = document.createElement("input");
+        input.type = "hidden";
+        input.name = "quantity";
+        input.value = "1";
+        form.appendChild(input);
+        if (csrfToken) {
+            var csrf = document.createElement("input");
+            csrf.type = "hidden";
+            csrf.name = "csrfmiddlewaretoken";
+            csrf.value = csrfToken.value;
+            form.appendChild(csrf);
+        }
+        document.body.appendChild(form);
+        form.submit();
+    });
+}
     });
 
 });

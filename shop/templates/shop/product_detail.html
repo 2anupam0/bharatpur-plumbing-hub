@@ -124,19 +124,28 @@
     </div>
     <div class="product-grid" style="grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));">
         {% for rp in related_products %}
-        <a href="{% url 'product_detail' rp.slug %}" class="product-card">
-            <div class="product-image">
-                {% if rp.image %}
-                <img src="{{ rp.image.url }}" alt="{{ rp.name }}" loading="lazy">
-                {% else %}
-                <div class="placeholder-icon"><i class="fas fa-image"></i></div>
-                {% endif %}
+        <div class="product-card">
+            <a href="{% url 'product_detail' rp.slug %}" class="product-card-link">
+                <div class="product-image">
+                    {% if rp.image %}
+                    <img src="{{ rp.image.url }}" alt="{{ rp.name }}" loading="lazy">
+                    {% else %}
+                    <div class="placeholder-icon"><i class="fas fa-image"></i></div>
+                    {% endif %}
+                </div>
+                <div class="product-info" style="padding:12px;">
+                    <h3 class="product-name" style="font-size:13px;">{{ rp.name }}</h3>
+                    <span class="current" style="font-size:15px;">Rs {{ rp.price|floatformat:0|intcomma }}</span>
+                </div>
+            </a>
+            {% if rp.is_in_stock %}
+            <div class="product-card-actions" style="padding:0 12px 12px;">
+                <button type="button" class="btn-add-cart" onclick="addToCart({{ rp.pk }}, this)" data-product-id="{{ rp.pk }}" style="padding:8px 12px;font-size:12px;">
+                    <i class="fas fa-cart-plus"></i> Add
+                </button>
             </div>
-            <div class="product-info" style="padding:12px;">
-                <h3 class="product-name" style="font-size:13px;">{{ rp.name }}</h3>
-                <span class="current" style="font-size:15px;">Rs {{ rp.price|floatformat:0|intcomma }}</span>
-            </div>
-        </a>
+            {% endif %}
+        </div>
         {% endfor %}
     </div>
 </section>

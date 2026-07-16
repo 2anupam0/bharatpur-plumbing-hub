@@ -120,9 +120,17 @@ def cart_add(request, product_id):
     if quantity < 1:
         quantity = 1
     if quantity > product.stock:
-        messages.warning(request, f"Only {product.stock} {product.unit} available in stock.")
         quantity = product.stock
     cart.add(product, quantity)
+    cart_count = len(cart)
+    if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+        from django.http import JsonResponse
+        return JsonResponse({
+            "success": True,
+            "message": f"{product.name} added to cart.",
+            "cart_count": cart_count,
+            "product_name": product.name,
+        })
     messages.success(request, f"{product.name} added to cart.")
     return redirect("cart_page")
 

@@ -66,37 +66,48 @@
             {% if products %}
             <div class="product-grid">
                 {% for product in products %}
-                <a href="{% url 'product_detail' product.slug %}" class="product-card animate-in">
-                    <div class="product-image">
-                        {% if product.image %}
-                        <img src="{{ product.image.url }}" alt="{{ product.name }}" loading="lazy">
-                        {% else %}
-                        <div class="placeholder-icon"><i class="fas fa-image"></i></div>
-                        {% endif %}
-                        {% if product.has_discount %}
-                        <span class="badge-discount">-{{ product.discount_percentage }}%</span>
-                        {% endif %}
-                        {% if product.is_featured %}
-                        <span class="badge-featured"><i class="fas fa-star mr-0.5"></i> Featured</span>
-                        {% endif %}
-                    </div>
-                    <div class="product-info">
-                        <p class="product-category">{{ product.category.name }}</p>
-                        <h3 class="product-name">{{ product.name }}</h3>
-                        <div class="product-price">
-                            <span class="current">Rs {{ product.price|floatformat:0|intcomma }}</span>
+                <div class="product-card animate-in">
+                    <a href="{% url 'product_detail' product.slug %}" class="product-card-link">
+                        <div class="product-image">
+                            {% if product.image %}
+                            <img src="{{ product.image.url }}" alt="{{ product.name }}" loading="lazy">
+                            {% else %}
+                            <div class="placeholder-icon"><i class="fas fa-image"></i></div>
+                            {% endif %}
                             {% if product.has_discount %}
-                            <span class="original">Rs {{ product.original_price|floatformat:0|intcomma }}</span>
+                            <span class="badge-discount">-{{ product.discount_percentage }}%</span>
+                            {% endif %}
+                            {% if product.is_featured %}
+                            <span class="badge-featured"><i class="fas fa-star mr-0.5"></i> Featured</span>
                             {% endif %}
                         </div>
-                        <div class="product-meta">
-                            <span class="stock-badge {% if product.is_in_stock %}in-stock{% else %}out-of-stock{% endif %}">
-                                {% if product.is_in_stock %}In Stock ({{ product.stock }}){% else %}Out of Stock{% endif %}
-                            </span>
-                            <span class="unit-text">per {{ product.unit }}</span>
+                        <div class="product-info">
+                            <p class="product-category">{{ product.category.name }}</p>
+                            <h3 class="product-name">{{ product.name }}</h3>
+                            <div class="product-price">
+                                <span class="current">Rs {{ product.price|floatformat:0|intcomma }}</span>
+                                {% if product.has_discount %}
+                                <span class="original">Rs {{ product.original_price|floatformat:0|intcomma }}</span>
+                                {% endif %}
+                            </div>
+                            <div class="product-meta">
+                                <span class="stock-badge {% if product.is_in_stock %}in-stock{% else %}out-of-stock{% endif %}">
+                                    {% if product.is_in_stock %}In Stock ({{ product.stock }}){% else %}Out of Stock{% endif %}
+                                </span>
+                                <span class="unit-text">per {{ product.unit }}</span>
+                            </div>
                         </div>
+                    </a>
+                    <div class="product-card-actions">
+                        {% if product.is_in_stock %}
+                        <button type="button" class="btn-add-cart" onclick="addToCart({{ product.pk }}, this)" data-product-id="{{ product.pk }}">
+                            <i class="fas fa-cart-plus"></i> Add to Cart
+                        </button>
+                        {% else %}
+                        <span class="btn-add-cart disabled">Out of Stock</span>
+                        {% endif %}
                     </div>
-                </a>
+                </div>
                 {% endfor %}
             </div>
             {% else %}

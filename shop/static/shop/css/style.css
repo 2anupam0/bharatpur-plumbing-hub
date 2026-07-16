@@ -163,11 +163,20 @@ body {
     overflow: hidden;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
+    display: flex;
+    flex-direction: column;
 }
 .product-card:hover {
     box-shadow: var(--shadow-xl);
     border-color: transparent;
     transform: translateY(-4px);
+}
+.product-card-link {
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
 }
 .product-card .product-image {
     aspect-ratio: 1;
@@ -266,6 +275,45 @@ body {
 .product-card .unit-text {
     font-size: 11px;
     color: var(--gray-400);
+}
+.product-card-actions {
+    padding: 0 16px 16px;
+}
+.btn-add-cart {
+    width: 100%;
+    padding: 10px 16px;
+    border: none;
+    border-radius: var(--radius-sm);
+    background: var(--primary);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+.btn-add-cart:hover {
+    background: var(--primary-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+.btn-add-cart:active {
+    transform: translateY(0);
+}
+.btn-add-cart.added {
+    background: var(--green);
+}
+.btn-add-cart.disabled {
+    background: var(--gray-200);
+    color: var(--gray-400);
+    cursor: not-allowed;
+}
+.btn-add-cart.disabled:hover {
+    transform: none;
+    box-shadow: none;
 }
 
 /* --- Badges --- */
@@ -965,4 +1013,6 @@ select.form-input {
     .product-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
     .product-card .product-info { padding: 12px; }
     .product-card .product-price .current { font-size: 15px; }
+    .product-card-actions { padding: 0 12px 12px; }
+    .btn-add-cart { padding: 8px 12px; font-size: 12px; }
 }
