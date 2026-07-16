@@ -281,28 +281,28 @@ body {
 }
 .cart-icon-btn {
     position: absolute;
-    top: 10px;
+    bottom: 56px;
     right: 10px;
     z-index: 5;
-    width: 34px;
-    height: 34px;
+    width: 36px;
+    height: 36px;
     border: none;
     border-radius: 50%;
-    background: #fff;
-    color: var(--primary);
+    background: var(--primary);
+    color: #fff;
     font-size: 14px;
     cursor: pointer;
     transition: all 0.2s ease;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 .cart-icon-btn:hover {
-    background: var(--primary);
+    background: var(--primary-dark);
     color: #fff;
     transform: scale(1.12);
-    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4);
+    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.45);
 }
 .cart-icon-btn:active {
     transform: scale(0.92);
