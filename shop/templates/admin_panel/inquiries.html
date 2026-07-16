@@ -1,0 +1,78 @@
+{% extends "admin_panel/base.html" %}
+
+{% block title %}Inquiries{% endblock %}
+{% block page_title %}Inquiries{% endblock %}
+
+{% block content %}
+<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
+    <div>
+        <p class="text-sm text-slate-500">{{ total_count }} inquiry{{ total_count|pluralize }} total</p>
+    </div>
+</div>
+
+<div class="flex flex-wrap items-center gap-2 mb-5">
+    <a href="{% url 'admin_panel_inquiries' %}" class="px-3 py-1.5 rounded-xl text-xs font-semibold transition-colors {% if not filter_status %}bg-brand-600 text-white{% else %}bg-white border border-slate-200 text-slate-600 hover:bg-slate-50{% endif %}">All</a>
+    <a href="{% url 'admin_panel_inquiries' %}?status=pending" class="px-3 py-1.5 rounded-xl text-xs font-semibold transition-colors {% if filter_status == 'pending' %}bg-yellow-500 text-white{% else %}bg-white border border-slate-200 text-slate-600 hover:bg-slate-50{% endif %}">Pending</a>
+    <a href="{% url 'admin_panel_inquiries' %}?status=resolved" class="px-3 py-1.5 rounded-xl text-xs font-semibold transition-colors {% if filter_status == 'resolved' %}bg-green-500 text-white{% else %}bg-white border border-slate-200 text-slate-600 hover:bg-slate-50{% endif %}">Resolved</a>
+</div>
+
+<div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+    <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+            <thead>
+                <tr class="border-b border-slate-200 bg-slate-50">
+                    <th class="text-left px-4 py-3 font-semibold text-slate-600">Name</th>
+                    <th class="text-left px-4 py-3 font-semibold text-slate-600">Phone</th>
+                    <th class="text-center px-4 py-3 font-semibold text-slate-600">Type</th>
+                    <th class="text-left px-4 py-3 font-semibold text-slate-600">Message</th>
+                    <th class="text-center px-4 py-3 font-semibold text-slate-600">Status</th>
+                    <th class="text-left px-4 py-3 font-semibold text-slate-600">Date</th>
+                    <th class="text-center px-4 py-3 font-semibold text-slate-600">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for inq in inquiries %}
+                <tr class="border-b border-slate-100 hover:bg-slate-50 transition-colors">
+                    <td class="px-4 py-3 font-semibold text-slate-800">{{ inq.name }}</td>
+                    <td class="px-4 py-3 text-slate-600">{{ inq.phone }}</td>
+                    <td class="px-4 py-3 text-center">
+                        {% if inq.inquiry_type == "bulk" %}<span class="inline-block px-2.5 py-0.5 bg-purple-100 text-purple-700 rounded-full text-xs font-semibold">Bulk Order</span>
+                        {% elif inq.inquiry_type == "contractor" %}<span class="inline-block px-2.5 py-0.5 bg-blue-100 text-blue-700 rounded-full text-xs font-semibold">Contractor</span>
+                        {% elif inq.inquiry_type == "delivery" %}<span class="inline-block px-2.5 py-0.5 bg-orange-100 text-orange-700 rounded-full text-xs font-semibold">Delivery</span>
+                        {% else %}<span class="inline-block px-2.5 py-0.5 bg-slate-100 text-slate-600 rounded-full text-xs font-semibold">General</span>{% endif %}
+                    </td>
+                    <td class="px-4 py-3 text-slate-600 max-w-[200px] truncate">{{ inq.message }}</td>
+                    <td class="px-4 py-3 text-center">
+                        {% if inq.is_resolved %}<span class="inline-block px-2.5 py-0.5 bg-green-100 text-green-700 rounded-full text-xs font-semibold">Resolved</span>{% else %}<span class="inline-block px-2.5 py-0.5 bg-yellow-100 text-yellow-700 rounded-full text-xs font-semibold">Pending</span>{% endif %}
+                    </td>
+                    <td class="px-4 py-3 text-slate-500 text-xs">{{ inq.created_at|date:"M d, Y" }}</td>
+                    <td class="px-4 py-3 text-center">
+                        <a href="{% url 'admin_panel_inquiry_detail' pk=inq.pk %}" class="p-1.5 rounded-lg text-slate-400 hover:text-brand-600 hover:bg-brand-50 transition-colors" title="View"><i class="fas fa-eye text-xs"></i></a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="7" class="px-4 py-10 text-center text-slate-400"><i class="fas fa-envelope text-3xl mb-2 block"></i>No inquiries found.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% if inquiries.has_other_pages %}
+<div class="flex items-center justify-center gap-1.5 mt-6">
+    {% if inquiries.has_previous %}
+    <a href="?page={{ inquiries.previous_page_number }}{% if filter_status %}&status={{ filter_status }}{% endif %}" class="px-3 py-1.5 rounded-xl border border-slate-200 text-sm text-slate-600 hover:bg-slate-50 transition-colors"><i class="fas fa-chevron-left text-xs"></i></a>
+    {% endif %}
+    {% for num in inquiries.paginator.page_range %}
+        {% if inquiries.number == num %}
+        <span class="px-3 py-1.5 rounded-xl bg-brand-600 text-white text-sm font-semibold">{{ num }}</span>
+        {% elif num > inquiries.number|add:'-3' and num < inquiries.number|add:'3' %}
+        <a href="?page={{ num }}{% if filter_status %}&status={{ filter_status }}{% endif %}" class="px-3 py-1.5 rounded-xl border border-slate-200 text-sm text-slate-600 hover:bg-slate-50 transition-colors">{{ num }}</a>
+        {% endif %}
+    {% endfor %}
+    {% if inquiries.has_next %}
+    <a href="?page={{ inquiries.next_page_number }}{% if filter_status %}&status={{ filter_status }}{% endif %}" class="px-3 py-1.5 rounded-xl border border-slate-200 text-sm text-slate-600 hover:bg-slate-50 transition-colors"><i class="fas fa-chevron-right text-xs"></i></a>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}

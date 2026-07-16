@@ -1,0 +1,159 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Admin{% endblock %} | {{ site_name }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {50:'#f0fdf4',100:'#dcfce7',200:'#bbf7d0',300:'#86efac',400:'#4ade80',500:'#22c55e',600:'#16a34a',700:'#15803d',800:'#166534',900:'#14532d'},
+                        slate: {50:'#f8fafc',100:'#f1f5f9',200:'#e2e8f0',300:'#cbd5e1',400:'#94a3b8',500:'#64748b',600:'#475569',700:'#334155',800:'#1e293b',900:'#0f172a',950:'#020617'},
+                    },
+                }
+            }
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'shop/css/admin_panel.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="bg-slate-100 text-slate-800 antialiased">
+
+    <div class="flex min-h-screen">
+        <!-- Sidebar -->
+        <aside id="sidebar" class="adm-sidebar w-64 bg-slate-950 text-white flex-shrink-0 fixed h-full z-30 transform -translate-x-full lg:translate-x-0 transition-transform overflow-y-auto">
+            <div class="p-5 border-b border-slate-800">
+                <a href="{% url 'admin_panel_dashboard' %}" class="flex items-center gap-3">
+                    <div class="w-9 h-9 bg-brand-600 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-shield-halved text-white text-sm"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-sm font-bold leading-tight">{{ site_name }}</h1>
+                        <p class="text-[10px] text-slate-400 font-medium">Admin Panel</p>
+                    </div>
+                </a>
+            </div>
+            <nav class="p-3">
+                <a href="{% url 'admin_panel_dashboard' %}" class="adm-nav {% if request.resolver_match.url_name == 'admin_panel_dashboard' %}active{% endif %}">
+                    <i class="fas fa-chart-pie w-5 text-center"></i> Dashboard
+                </a>
+
+                <div class="border-t border-slate-800 my-3"></div>
+
+                <p class="text-[10px] font-bold text-slate-500 uppercase tracking-wider px-3 mb-2">Management</p>
+                <a href="{% url 'admin_panel_users' %}" class="adm-nav {% if 'user' in request.resolver_match.url_name %}active{% endif %}">
+                    <i class="fas fa-users w-5 text-center"></i> Users
+                </a>
+                <a href="{% url 'admin_panel_products' %}" class="adm-nav {% if 'product' in request.resolver_match.url_name %}active{% endif %}">
+                    <i class="fas fa-box w-5 text-center"></i> Products
+                </a>
+                <a href="{% url 'admin_panel_categories' %}" class="adm-nav {% if 'category' in request.resolver_match.url_name %}active{% endif %}">
+                    <i class="fas fa-tags w-5 text-center"></i> Categories
+                </a>
+
+                <div class="border-t border-slate-800 my-3"></div>
+
+                <p class="text-[10px] font-bold text-slate-500 uppercase tracking-wider px-3 mb-2">Commerce</p>
+                <a href="{% url 'admin_panel_orders' %}" class="adm-nav {% if 'order' in request.resolver_match.url_name %}active{% endif %}">
+                    <i class="fas fa-shopping-cart w-5 text-center"></i> Orders
+                </a>
+                <a href="{% url 'admin_panel_bills' %}" class="adm-nav {% if 'bill' in request.resolver_match.url_name %}active{% endif %}">
+                    <i class="fas fa-file-invoice-dollar w-5 text-center"></i> Bills
+                </a>
+
+                <div class="border-t border-slate-800 my-3"></div>
+
+                <p class="text-[10px] font-bold text-slate-500 uppercase tracking-wider px-3 mb-2">System</p>
+                <a href="{% url 'admin_panel_inquiries' %}" class="adm-nav {% if 'inquiry' in request.resolver_match.url_name %}active{% endif %}">
+                    <i class="fas fa-envelope w-5 text-center"></i> Inquiries
+                </a>
+                <a href="{% url 'admin_panel_settings' %}" class="adm-nav {% if request.resolver_match.url_name == 'admin_panel_settings' %}active{% endif %}">
+                    <i class="fas fa-gear w-5 text-center"></i> Settings
+                </a>
+
+                <div class="border-t border-slate-800 my-3"></div>
+
+                <p class="text-[10px] font-bold text-slate-500 uppercase tracking-wider px-3 mb-2">Quick Links</p>
+                <a href="{% url 'owner_dashboard' %}" class="adm-nav" target="_blank">
+                    <i class="fas fa-tachometer-alt w-5 text-center"></i> Owner Dashboard
+                </a>
+                <a href="{% url 'home' %}" class="adm-nav" target="_blank">
+                    <i class="fas fa-globe w-5 text-center"></i> View Website
+                </a>
+            </nav>
+            <div class="p-4 border-t border-slate-800 mt-auto">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-brand-600 rounded-full flex items-center justify-center text-xs font-bold">
+                        {{ request.user.username|first|upper }}
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-xs font-semibold truncate">{{ request.user.get_full_name|default:request.user.username }}</p>
+                        <p class="text-[10px] text-slate-400">{% if request.user.is_superuser %}Super Admin{% else %}Staff{% endif %}</p>
+                    </div>
+                    <a href="{% url 'admin_panel_logout' %}" class="text-slate-400 hover:text-red-400 transition-colors" title="Logout">
+                        <i class="fas fa-right-from-bracket"></i>
+                    </a>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Overlay for mobile -->
+        <div id="sidebar-overlay" class="fixed inset-0 bg-black/50 z-20 hidden lg:hidden" onclick="toggleSidebar()"></div>
+
+        <!-- Main Content -->
+        <div class="flex-1 lg:ml-64">
+            <!-- Top Bar -->
+            <header class="bg-white border-b border-slate-200 sticky top-0 z-10">
+                <div class="flex items-center justify-between px-4 lg:px-6 h-14">
+                    <button onclick="toggleSidebar()" class="lg:hidden p-2 rounded-lg hover:bg-slate-100">
+                        <i class="fas fa-bars text-slate-600"></i>
+                    </button>
+                    <h2 class="text-sm font-bold text-slate-800">{% block page_title %}Admin{% endblock %}</h2>
+                    <div class="flex items-center gap-3">
+                        <a href="{% url 'admin_panel_dashboard' %}" class="text-xs text-slate-500 hover:text-slate-800 transition-colors">
+                            <i class="fas fa-chart-pie mr-1"></i> Dashboard
+                        </a>
+                        <div class="w-8 h-8 bg-slate-200 rounded-full flex items-center justify-center text-xs font-bold text-slate-600">
+                            <i class="fas fa-bell"></i>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            {% if messages %}
+            <div class="px-4 lg:px-6 mt-4">
+                {% for message in messages %}
+                <div class="adm-alert {% if message.tags == 'success' %}adm-alert-success{% elif message.tags == 'error' %}adm-alert-error{% else %}adm-alert-info{% endif %} mb-3">
+                    <i class="fas {% if message.tags == 'success' %}fa-check-circle{% elif message.tags == 'error' %}fa-exclamation-circle{% else %}fa-info-circle{% endif %}"></i>
+                    <span>{{ message }}</span>
+                    <button onclick="this.parentElement.remove()" class="ml-auto opacity-50 hover:opacity-100"><i class="fas fa-times"></i></button>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <main class="p-4 lg:p-6">
+                {% block content %}{% endblock %}
+            </main>
+        </div>
+    </div>
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            sidebar.classList.toggle('-translate-x-full');
+            overlay.classList.toggle('hidden');
+        }
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

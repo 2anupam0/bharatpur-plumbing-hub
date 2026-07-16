@@ -1,0 +1,114 @@
+{% extends "admin_panel/base.html" %}
+
+{% block title %}Products{% endblock %}
+{% block page_title %}Products{% endblock %}
+
+{% block content %}
+<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
+    <div>
+        <p class="text-sm text-slate-500">{{ total_count }} product{{ total_count|pluralize }} total</p>
+    </div>
+    <a href="{% url 'admin_panel_product_add' %}" class="inline-flex items-center gap-2 px-4 py-2 bg-brand-600 text-white rounded-xl text-sm font-semibold hover:bg-brand-700 transition-colors">
+        <i class="fas fa-plus text-xs"></i> Add Product
+    </a>
+</div>
+
+<div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4 mb-5">
+    <form method="GET" class="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+        <div class="relative flex-1 w-full sm:w-auto">
+            <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+            <input type="text" name="q" value="{{ search }}" placeholder="Search products..." class="pl-9 pr-4 py-2 border-2 border-slate-200 rounded-xl text-sm focus:border-brand-600 focus:outline-none w-full">
+        </div>
+        <select name="category" class="px-3 py-2 border-2 border-slate-200 rounded-xl text-sm focus:border-brand-600 focus:outline-none text-slate-700">
+            <option value="">All Categories</option>
+            {% for cat in categories %}
+            <option value="{{ cat.pk }}" {% if filter_category == cat.pk|stringformat:"d" %}selected{% endif %}>{{ cat.name }}</option>
+            {% endfor %}
+        </select>
+        <select name="status" class="px-3 py-2 border-2 border-slate-200 rounded-xl text-sm focus:border-brand-600 focus:outline-none text-slate-700">
+            <option value="">All Status</option>
+            <option value="active" {% if filter_status == "active" %}selected{% endif %}>Active</option>
+            <option value="inactive" {% if filter_status == "inactive" %}selected{% endif %}>Inactive</option>
+            <option value="low_stock" {% if filter_status == "low_stock" %}selected{% endif %}>Low Stock</option>
+        </select>
+        <button type="submit" class="px-4 py-2 bg-brand-600 text-white rounded-xl text-sm font-semibold hover:bg-brand-700 transition-colors">Filter</button>
+        {% if search or filter_category or filter_status %}<a href="{% url 'admin_panel_products' %}" class="text-sm text-slate-400 hover:text-red-500"><i class="fas fa-times"></i> Clear</a>{% endif %}
+    </form>
+</div>
+
+<div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+    <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+            <thead>
+                <tr class="border-b border-slate-200 bg-slate-50">
+                    <th class="text-left px-4 py-3 font-semibold text-slate-600">Image</th>
+                    <th class="text-left px-4 py-3 font-semibold text-slate-600">Name</th>
+                    <th class="text-left px-4 py-3 font-semibold text-slate-600">Category</th>
+                    <th class="text-right px-4 py-3 font-semibold text-slate-600">Price</th>
+                    <th class="text-center px-4 py-3 font-semibold text-slate-600">Stock</th>
+                    <th class="text-center px-4 py-3 font-semibold text-slate-600">Active</th>
+                    <th class="text-center px-4 py-3 font-semibold text-slate-600">Featured</th>
+                    <th class="text-center px-4 py-3 font-semibold text-slate-600">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in products %}
+                <tr class="border-b border-slate-100 hover:bg-slate-50 transition-colors">
+                    <td class="px-4 py-3">
+                        {% if p.image %}
+                        <img src="{{ p.image.url }}" alt="{{ p.name }}" class="w-10 h-10 rounded-lg object-cover border border-slate-200">
+                        {% else %}
+                        <div class="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center text-slate-400"><i class="fas fa-image text-sm"></i></div>
+                        {% endif %}
+                    </td>
+                    <td class="px-4 py-3 font-semibold text-slate-800">{{ p.name }}</td>
+                    <td class="px-4 py-3"><span class="inline-block px-2.5 py-0.5 bg-blue-100 text-blue-700 rounded-full text-xs font-semibold">{{ p.category }}</span></td>
+                    <td class="px-4 py-3 text-right font-semibold text-slate-800">Rs {{ p.price|floatformat:0 }}</td>
+                    <td class="px-4 py-3 text-center">
+                        {% if p.stock <= 5 %}
+                        <span class="inline-block px-2.5 py-0.5 bg-red-100 text-red-700 rounded-full text-xs font-semibold">{{ p.stock }}</span>
+                        {% elif p.stock <= 20 %}
+                        <span class="inline-block px-2.5 py-0.5 bg-yellow-100 text-yellow-700 rounded-full text-xs font-semibold">{{ p.stock }}</span>
+                        {% else %}
+                        <span class="inline-block px-2.5 py-0.5 bg-green-100 text-green-700 rounded-full text-xs font-semibold">{{ p.stock }}</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-4 py-3 text-center">
+                        {% if p.is_active %}<span class="inline-block px-2.5 py-0.5 bg-green-100 text-green-700 rounded-full text-xs font-semibold">Active</span>{% else %}<span class="inline-block px-2.5 py-0.5 bg-red-100 text-red-700 rounded-full text-xs font-semibold">Inactive</span>{% endif %}
+                    </td>
+                    <td class="px-4 py-3 text-center">
+                        {% if p.is_featured %}<i class="fas fa-star text-yellow-500 text-sm"></i>{% else %}<span class="text-slate-300"><i class="far fa-star text-sm"></i></span>{% endif %}
+                    </td>
+                    <td class="px-4 py-3 text-center">
+                        <div class="flex items-center justify-center gap-1.5">
+                            <a href="{% url 'admin_panel_product_edit' pk=p.pk %}" class="p-1.5 rounded-lg text-slate-400 hover:text-brand-600 hover:bg-brand-50 transition-colors" title="Edit"><i class="fas fa-pen-to-square text-xs"></i></a>
+                            <a href="{% url 'admin_panel_product_delete' pk=p.pk %}" class="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors" title="Delete"><i class="fas fa-trash text-xs"></i></a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="8" class="px-4 py-10 text-center text-slate-400"><i class="fas fa-box text-3xl mb-2 block"></i>No products found.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% if products.has_other_pages %}
+<div class="flex items-center justify-center gap-1.5 mt-6">
+    {% if products.has_previous %}
+    <a href="?page={{ products.previous_page_number }}{% if search %}&q={{ search }}{% endif %}{% if filter_category %}&category={{ filter_category }}{% endif %}{% if filter_status %}&status={{ filter_status }}{% endif %}" class="px-3 py-1.5 rounded-xl border border-slate-200 text-sm text-slate-600 hover:bg-slate-50 transition-colors"><i class="fas fa-chevron-left text-xs"></i></a>
+    {% endif %}
+    {% for num in products.paginator.page_range %}
+        {% if products.number == num %}
+        <span class="px-3 py-1.5 rounded-xl bg-brand-600 text-white text-sm font-semibold">{{ num }}</span>
+        {% elif num > products.number|add:'-3' and num < products.number|add:'3' %}
+        <a href="?page={{ num }}{% if search %}&q={{ search }}{% endif %}{% if filter_category %}&category={{ filter_category }}{% endif %}{% if filter_status %}&status={{ filter_status }}{% endif %}" class="px-3 py-1.5 rounded-xl border border-slate-200 text-sm text-slate-600 hover:bg-slate-50 transition-colors">{{ num }}</a>
+        {% endif %}
+    {% endfor %}
+    {% if products.has_next %}
+    <a href="?page={{ products.next_page_number }}{% if search %}&q={{ search }}{% endif %}{% if filter_category %}&category={{ filter_category }}{% endif %}{% if filter_status %}&status={{ filter_status }}{% endif %}" class="px-3 py-1.5 rounded-xl border border-slate-200 text-sm text-slate-600 hover:bg-slate-50 transition-colors"><i class="fas fa-chevron-right text-xs"></i></a>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}

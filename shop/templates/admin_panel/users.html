@@ -1,0 +1,88 @@
+{% extends "admin_panel/base.html" %}
+
+{% block title %}Users{% endblock %}
+{% block page_title %}Users{% endblock %}
+
+{% block content %}
+<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
+    <div>
+        <p class="text-sm text-slate-500">{{ total_count }} user{{ total_count|pluralize }} total</p>
+    </div>
+    <div class="flex items-center gap-3">
+        <form method="GET" class="flex items-center gap-2">
+            <div class="relative">
+                <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                <input type="text" name="q" value="{{ search }}" placeholder="Search users..." class="pl-9 pr-4 py-2 border-2 border-slate-200 rounded-xl text-sm focus:border-brand-600 focus:outline-none w-64">
+            </div>
+            {% if search %}<a href="{% url 'admin_panel_users' %}" class="text-slate-400 hover:text-red-500 text-sm"><i class="fas fa-times"></i></a>{% endif %}
+        </form>
+        <a href="{% url 'admin_panel_user_add' %}" class="inline-flex items-center gap-2 px-4 py-2 bg-brand-600 text-white rounded-xl text-sm font-semibold hover:bg-brand-700 transition-colors">
+            <i class="fas fa-plus text-xs"></i> Add User
+        </a>
+    </div>
+</div>
+
+<div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+    <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+            <thead>
+                <tr class="border-b border-slate-200 bg-slate-50">
+                    <th class="text-left px-4 py-3 font-semibold text-slate-600">Username</th>
+                    <th class="text-left px-4 py-3 font-semibold text-slate-600">Email</th>
+                    <th class="text-left px-4 py-3 font-semibold text-slate-600">Full Name</th>
+                    <th class="text-center px-4 py-3 font-semibold text-slate-600">Staff</th>
+                    <th class="text-center px-4 py-3 font-semibold text-slate-600">Superuser</th>
+                    <th class="text-center px-4 py-3 font-semibold text-slate-600">Active</th>
+                    <th class="text-left px-4 py-3 font-semibold text-slate-600">Joined</th>
+                    <th class="text-center px-4 py-3 font-semibold text-slate-600">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for u in users %}
+                <tr class="border-b border-slate-100 hover:bg-slate-50 transition-colors">
+                    <td class="px-4 py-3 font-semibold text-slate-800">{{ u.username }}</td>
+                    <td class="px-4 py-3 text-slate-600">{{ u.email|default:"-" }}</td>
+                    <td class="px-4 py-3 text-slate-600">{{ u.get_full_name|default:"-" }}</td>
+                    <td class="px-4 py-3 text-center">
+                        {% if u.is_staff %}<span class="inline-block px-2.5 py-0.5 bg-brand-100 text-brand-700 rounded-full text-xs font-semibold">Yes</span>{% else %}<span class="inline-block px-2.5 py-0.5 bg-slate-100 text-slate-500 rounded-full text-xs font-semibold">No</span>{% endif %}
+                    </td>
+                    <td class="px-4 py-3 text-center">
+                        {% if u.is_superuser %}<span class="inline-block px-2.5 py-0.5 bg-purple-100 text-purple-700 rounded-full text-xs font-semibold">Yes</span>{% else %}<span class="inline-block px-2.5 py-0.5 bg-slate-100 text-slate-500 rounded-full text-xs font-semibold">No</span>{% endif %}
+                    </td>
+                    <td class="px-4 py-3 text-center">
+                        {% if u.is_active %}<span class="inline-block px-2.5 py-0.5 bg-green-100 text-green-700 rounded-full text-xs font-semibold">Active</span>{% else %}<span class="inline-block px-2.5 py-0.5 bg-red-100 text-red-700 rounded-full text-xs font-semibold">Inactive</span>{% endif %}
+                    </td>
+                    <td class="px-4 py-3 text-slate-500 text-xs">{{ u.date_joined|date:"M d, Y" }}</td>
+                    <td class="px-4 py-3 text-center">
+                        <div class="flex items-center justify-center gap-1.5">
+                            <a href="{% url 'admin_panel_user_edit' pk=u.pk %}" class="p-1.5 rounded-lg text-slate-400 hover:text-brand-600 hover:bg-brand-50 transition-colors" title="Edit"><i class="fas fa-pen-to-square text-xs"></i></a>
+                            <a href="{% url 'admin_panel_user_delete' pk=u.pk %}" class="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors" title="Delete"><i class="fas fa-trash text-xs"></i></a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="8" class="px-4 py-10 text-center text-slate-400"><i class="fas fa-users text-3xl mb-2 block"></i>No users found.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% if users.has_other_pages %}
+<div class="flex items-center justify-center gap-1.5 mt-6">
+    {% if users.has_previous %}
+    <a href="?page={{ users.previous_page_number }}{% if search %}&q={{ search }}{% endif %}" class="px-3 py-1.5 rounded-xl border border-slate-200 text-sm text-slate-600 hover:bg-slate-50 transition-colors"><i class="fas fa-chevron-left text-xs"></i></a>
+    {% endif %}
+    {% for num in users.paginator.page_range %}
+        {% if users.number == num %}
+        <span class="px-3 py-1.5 rounded-xl bg-brand-600 text-white text-sm font-semibold">{{ num }}</span>
+        {% elif num > users.number|add:'-3' and num < users.number|add:'3' %}
+        <a href="?page={{ num }}{% if search %}&q={{ search }}{% endif %}" class="px-3 py-1.5 rounded-xl border border-slate-200 text-sm text-slate-600 hover:bg-slate-50 transition-colors">{{ num }}</a>
+        {% endif %}
+    {% endfor %}
+    {% if users.has_next %}
+    <a href="?page={{ users.next_page_number }}{% if search %}&q={{ search }}{% endif %}" class="px-3 py-1.5 rounded-xl border border-slate-200 text-sm text-slate-600 hover:bg-slate-50 transition-colors"><i class="fas fa-chevron-right text-xs"></i></a>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,80 @@
+{% extends "admin_panel/base.html" %}
+
+{% block title %}Bills{% endblock %}
+{% block page_title %}Bills{% endblock %}
+
+{% block content %}
+<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
+    <div>
+        <p class="text-sm text-slate-500">{{ total_count }} bill{{ total_count|pluralize }} total</p>
+    </div>
+</div>
+
+<div class="flex flex-wrap items-center gap-2 mb-5">
+    <a href="{% url 'admin_panel_bills' %}" class="px-3 py-1.5 rounded-xl text-xs font-semibold transition-colors {% if not filter_status %}bg-brand-600 text-white{% else %}bg-white border border-slate-200 text-slate-600 hover:bg-slate-50{% endif %}">All</a>
+    <a href="{% url 'admin_panel_bills' %}?status=draft" class="px-3 py-1.5 rounded-xl text-xs font-semibold transition-colors {% if filter_status == 'draft' %}bg-slate-500 text-white{% else %}bg-white border border-slate-200 text-slate-600 hover:bg-slate-50{% endif %}">Draft</a>
+    <a href="{% url 'admin_panel_bills' %}?status=confirmed" class="px-3 py-1.5 rounded-xl text-xs font-semibold transition-colors {% if filter_status == 'confirmed' %}bg-blue-500 text-white{% else %}bg-white border border-slate-200 text-slate-600 hover:bg-slate-50{% endif %}">Confirmed</a>
+    <a href="{% url 'admin_panel_bills' %}?status=paid" class="px-3 py-1.5 rounded-xl text-xs font-semibold transition-colors {% if filter_status == 'paid' %}bg-green-500 text-white{% else %}bg-white border border-slate-200 text-slate-600 hover:bg-slate-50{% endif %}">Paid</a>
+    <a href="{% url 'admin_panel_bills' %}?status=cancelled" class="px-3 py-1.5 rounded-xl text-xs font-semibold transition-colors {% if filter_status == 'cancelled' %}bg-red-500 text-white{% else %}bg-white border border-slate-200 text-slate-600 hover:bg-slate-50{% endif %}">Cancelled</a>
+</div>
+
+<div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+    <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+            <thead>
+                <tr class="border-b border-slate-200 bg-slate-50">
+                    <th class="text-left px-4 py-3 font-semibold text-slate-600">Bill Number</th>
+                    <th class="text-left px-4 py-3 font-semibold text-slate-600">Customer</th>
+                    <th class="text-right px-4 py-3 font-semibold text-slate-600">Total</th>
+                    <th class="text-center px-4 py-3 font-semibold text-slate-600">Payment</th>
+                    <th class="text-center px-4 py-3 font-semibold text-slate-600">Status</th>
+                    <th class="text-left px-4 py-3 font-semibold text-slate-600">Date</th>
+                    <th class="text-center px-4 py-3 font-semibold text-slate-600">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for b in bills %}
+                <tr class="border-b border-slate-100 hover:bg-slate-50 transition-colors">
+                    <td class="px-4 py-3">
+                        <a href="{% url 'admin_panel_bill_detail' pk=b.pk %}" class="font-semibold text-brand-600 hover:text-brand-700 transition-colors">{{ b.bill_number }}</a>
+                    </td>
+                    <td class="px-4 py-3 text-slate-800">{{ b.customer_name }}</td>
+                    <td class="px-4 py-3 text-right font-semibold text-slate-800">Rs {{ b.grand_total|floatformat:0 }}</td>
+                    <td class="px-4 py-3 text-center text-slate-600 text-xs">{{ b.get_payment_method_display }}</td>
+                    <td class="px-4 py-3 text-center">
+                        {% if b.status == "paid" %}<span class="inline-block px-2.5 py-0.5 bg-green-100 text-green-700 rounded-full text-xs font-semibold">Paid</span>
+                        {% elif b.status == "confirmed" %}<span class="inline-block px-2.5 py-0.5 bg-blue-100 text-blue-700 rounded-full text-xs font-semibold">Confirmed</span>
+                        {% elif b.status == "cancelled" %}<span class="inline-block px-2.5 py-0.5 bg-red-100 text-red-700 rounded-full text-xs font-semibold">Cancelled</span>
+                        {% else %}<span class="inline-block px-2.5 py-0.5 bg-slate-100 text-slate-600 rounded-full text-xs font-semibold">Draft</span>{% endif %}
+                    </td>
+                    <td class="px-4 py-3 text-slate-500 text-xs">{{ b.created_at|date:"M d, Y" }}</td>
+                    <td class="px-4 py-3 text-center">
+                        <a href="{% url 'admin_panel_bill_detail' pk=b.pk %}" class="p-1.5 rounded-lg text-slate-400 hover:text-brand-600 hover:bg-brand-50 transition-colors" title="View"><i class="fas fa-eye text-xs"></i></a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="7" class="px-4 py-10 text-center text-slate-400"><i class="fas fa-file-invoice-dollar text-3xl mb-2 block"></i>No bills found.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% if bills.has_other_pages %}
+<div class="flex items-center justify-center gap-1.5 mt-6">
+    {% if bills.has_previous %}
+    <a href="?page={{ bills.previous_page_number }}{% if filter_status %}&status={{ filter_status }}{% endif %}" class="px-3 py-1.5 rounded-xl border border-slate-200 text-sm text-slate-600 hover:bg-slate-50 transition-colors"><i class="fas fa-chevron-left text-xs"></i></a>
+    {% endif %}
+    {% for num in bills.paginator.page_range %}
+        {% if bills.number == num %}
+        <span class="px-3 py-1.5 rounded-xl bg-brand-600 text-white text-sm font-semibold">{{ num }}</span>
+        {% elif num > bills.number|add:'-3' and num < bills.number|add:'3' %}
+        <a href="?page={{ num }}{% if filter_status %}&status={{ filter_status }}{% endif %}" class="px-3 py-1.5 rounded-xl border border-slate-200 text-sm text-slate-600 hover:bg-slate-50 transition-colors">{{ num }}</a>
+        {% endif %}
+    {% endfor %}
+    {% if bills.has_next %}
+    <a href="?page={{ bills.next_page_number }}{% if filter_status %}&status={{ filter_status }}{% endif %}" class="px-3 py-1.5 rounded-xl border border-slate-200 text-sm text-slate-600 hover:bg-slate-50 transition-colors"><i class="fas fa-chevron-right text-xs"></i></a>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}

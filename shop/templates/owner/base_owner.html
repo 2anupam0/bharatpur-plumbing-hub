@@ -52,7 +52,7 @@
                 <a href="{% url 'owner_products' %}" class="ow-nav-link {% if 'product' in request.resolver_match.url_name %}active{% endif %}">
                     <i class="fas fa-box w-5 text-center"></i> Products
                 </a>
-                <a href="/admin/shop/category/" class="ow-nav-link {% if 'category' in request.resolver_match.url_name %}active{% endif %}">
+                <a href="{% url 'admin_panel_categories' %}" class="ow-nav-link {% if 'category' in request.resolver_match.url_name %}active{% endif %}">
                     <i class="fas fa-tags w-5 text-center"></i> Categories
                 </a>
                 <a href="{% url 'owner_orders' %}" class="ow-nav-link {% if 'order' in request.resolver_match.url_name %}active{% endif %}">
@@ -72,14 +72,14 @@
                 <div class="border-t border-ow-700 my-3"></div>
 
                 <p class="text-[10px] font-bold text-ow-500 uppercase tracking-wider px-3 mb-2">Administration</p>
-                <a href="/admin/shop/contactinquiry/" class="ow-nav-link">
+                <a href="{% url 'admin_panel_inquiries' %}" class="ow-nav-link">
                     <i class="fas fa-envelope w-5 text-center"></i> Inquiries
                 </a>
-                <a href="/admin/shop/sitesettings/" class="ow-nav-link">
+                <a href="{% url 'admin_panel_settings' %}" class="ow-nav-link">
                     <i class="fas fa-cog w-5 text-center"></i> Site Settings
                 </a>
-                <a href="/admin/" class="ow-nav-link">
-                    <i class="fas fa-shield-halved w-5 text-center"></i> Django Admin
+                <a href="{% url 'admin_panel_dashboard' %}" class="ow-nav-link">
+                    <i class="fas fa-shield-halved w-5 text-center"></i> Admin Panel
                 </a>
 
                 <div class="border-t border-ow-700 my-3"></div>
