@@ -89,6 +89,11 @@
                                 {% if product.has_discount %}
                                 <span class="original">Rs {{ product.original_price|floatformat:0|intcomma }}</span>
                                 {% endif %}
+                                {% if product.is_in_stock %}
+                                <button type="button" class="cart-icon-btn" onclick="event.preventDefault();event.stopPropagation();addToCart({{ product.pk }}, this)" title="Add to Cart">
+                                    <i class="fas fa-cart-plus"></i>
+                                </button>
+                                {% endif %}
                             </div>
                             <div class="product-meta">
                                 <span class="stock-badge {% if product.is_in_stock %}in-stock{% else %}out-of-stock{% endif %}">
@@ -98,15 +103,6 @@
                             </div>
                         </div>
                     </a>
-                    <div class="product-card-actions">
-                        {% if product.is_in_stock %}
-                        <button type="button" class="btn-add-cart" onclick="addToCart({{ product.pk }}, this)" data-product-id="{{ product.pk }}">
-                            <i class="fas fa-cart-plus"></i> Add to Cart
-                        </button>
-                        {% else %}
-                        <span class="btn-add-cart disabled">Out of Stock</span>
-                        {% endif %}
-                    </div>
                 </div>
                 {% endfor %}
             </div>

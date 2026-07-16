@@ -117,7 +117,7 @@ function addToCart(productId, btn) {
     .then(function(data) {
         if (data.success) {
             btn.classList.add("added");
-            btn.innerHTML = '<i class="fas fa-check"></i> Added!';
+            btn.innerHTML = '<i class="fas fa-check"></i>';
             var badge = document.getElementById("cart-count-badge");
             if (badge) {
                 badge.textContent = data.cart_count;

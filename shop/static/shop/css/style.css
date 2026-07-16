@@ -277,43 +277,34 @@ body {
     color: var(--gray-400);
 }
 .product-card-actions {
-    padding: 0 16px 16px;
+    display: none;
 }
-.btn-add-cart {
-    width: 100%;
-    padding: 10px 16px;
+.cart-icon-btn {
+    width: 32px;
+    height: 32px;
     border: none;
-    border-radius: var(--radius-sm);
+    border-radius: 50%;
     background: var(--primary);
     color: #fff;
     font-size: 13px;
-    font-weight: 600;
     cursor: pointer;
     transition: all 0.2s ease;
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
+    flex-shrink: 0;
+    margin-left: 6px;
 }
-.btn-add-cart:hover {
+.cart-icon-btn:hover {
     background: var(--primary-dark);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    transform: scale(1.15);
+    box-shadow: 0 3px 10px rgba(37, 99, 235, 0.35);
 }
-.btn-add-cart:active {
-    transform: translateY(0);
+.cart-icon-btn:active {
+    transform: scale(0.95);
 }
-.btn-add-cart.added {
+.cart-icon-btn.added {
     background: var(--green);
-}
-.btn-add-cart.disabled {
-    background: var(--gray-200);
-    color: var(--gray-400);
-    cursor: not-allowed;
-}
-.btn-add-cart.disabled:hover {
-    transform: none;
-    box-shadow: none;
 }
 
 /* --- Badges --- */
@@ -1013,6 +1004,5 @@ select.form-input {
     .product-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
     .product-card .product-info { padding: 12px; }
     .product-card .product-price .current { font-size: 15px; }
-    .product-card-actions { padding: 0 12px 12px; }
-    .btn-add-cart { padding: 8px 12px; font-size: 12px; }
+    .cart-icon-btn { width: 28px; height: 28px; font-size: 11px; }
 }
