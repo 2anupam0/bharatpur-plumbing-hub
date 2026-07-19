@@ -68,9 +68,16 @@
                 {% for product in products %}
                 <div class="product-card animate-in">
                     {% if product.is_in_stock %}
-                    <button type="button" class="cart-icon-btn" onclick="event.preventDefault();event.stopPropagation();addToCart({{ product.pk }}, this)" title="Add to Cart">
-                        <i class="fas fa-cart-plus"></i>
-                    </button>
+                    <div class="card-qty-bar show" data-pk="{{ product.pk }}">
+                        <div class="card-qty-ctrl">
+                            <button type="button" onclick="cardQty({{ product.pk }}, -1, this)"><i class="fas fa-minus" style="font-size:10px;"></i></button>
+                            <span class="card-qty-val">1</span>
+                            <button type="button" onclick="cardQty({{ product.pk }}, 1, this)"><i class="fas fa-plus" style="font-size:10px;"></i></button>
+                        </div>
+                        <button type="button" class="card-add-btn" onclick="event.preventDefault();event.stopPropagation();cardAddToCart({{ product.pk }}, this)" title="Add to Cart">
+                            <i class="fas fa-cart-plus"></i> Add
+                        </button>
+                    </div>
                     {% endif %}
                     <a href="{% url 'product_detail' product.slug %}" class="product-card-link">
                         <div class="product-image">
@@ -149,4 +156,51 @@
         </div>
     </div>
 </div>
+
+{% if related_products and current_category %}
+<section class="max-w-7xl mx-auto px-4 pb-12">
+    <div class="section-title" style="text-align:left;margin-bottom:24px;">
+        <h2 style="font-size:20px;">More from {{ current_category.name }}</h2>
+        <p>Explore other products in this category</p>
+    </div>
+    <div class="product-grid">
+        {% for rp in related_products %}
+        <div class="product-card animate-in">
+            {% if rp.is_in_stock %}
+            <div class="card-qty-bar show" data-pk="{{ rp.pk }}">
+                <div class="card-qty-ctrl">
+                    <button type="button" onclick="cardQty({{ rp.pk }}, -1, this)"><i class="fas fa-minus" style="font-size:10px;"></i></button>
+                    <span class="card-qty-val">1</span>
+                    <button type="button" onclick="cardQty({{ rp.pk }}, 1, this)"><i class="fas fa-plus" style="font-size:10px;"></i></button>
+                </div>
+                <button type="button" class="card-add-btn" onclick="event.preventDefault();event.stopPropagation();cardAddToCart({{ rp.pk }}, this)" title="Add to Cart">
+                    <i class="fas fa-cart-plus"></i> Add
+                </button>
+            </div>
+            {% endif %}
+            <a href="{% url 'product_detail' rp.slug %}" class="product-card-link">
+                <div class="product-image">
+                    {% with first_img=rp.additional_images.all.0 %}
+                    {% if first_img %}
+                    <img src="{{ first_img.image.url }}" alt="{{ rp.name }}" loading="lazy">
+                    {% elif rp.image %}
+                    <img src="{{ rp.image.url }}" alt="{{ rp.name }}" loading="lazy">
+                    {% else %}
+                    <div class="placeholder-icon"><i class="fas fa-image"></i></div>
+                    {% endif %}
+                    {% endwith %}
+                </div>
+                <div class="product-info">
+                    <p class="product-category">{{ rp.category.name }}</p>
+                    <h3 class="product-name">{{ rp.name }}</h3>
+                    <div class="product-price">
+                        <span class="current">Rs {{ rp.price|floatformat:0|intcomma }}</span>
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
 {% endblock %}

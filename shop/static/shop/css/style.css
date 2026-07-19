@@ -312,6 +312,97 @@ body {
     color: #fff;
 }
 
+/* --- Card Quantity Controls --- */
+.card-qty-bar {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    padding: 8px 12px;
+    border-top: 1px solid var(--gray-100);
+    background: var(--gray-50);
+    opacity: 0;
+    transform: translateY(4px);
+    transition: all 0.25s ease;
+}
+.product-card:hover .card-qty-bar {
+    opacity: 1;
+    transform: translateY(0);
+}
+.card-qty-bar.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+.card-qty-ctrl {
+    display: flex;
+    align-items: center;
+    border: 1.5px solid var(--gray-200);
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--white);
+    flex-shrink: 0;
+}
+.card-qty-ctrl button {
+    width: 30px;
+    height: 30px;
+    border: none;
+    background: transparent;
+    color: var(--gray-500);
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s ease;
+}
+.card-qty-ctrl button:hover {
+    background: var(--primary-50);
+    color: var(--primary);
+}
+.card-qty-ctrl button:active {
+    transform: scale(0.9);
+}
+.card-qty-ctrl .card-qty-val {
+    width: 32px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--gray-800);
+    border-left: 1px solid var(--gray-200);
+    border-right: 1px solid var(--gray-200);
+    line-height: 30px;
+    user-select: none;
+}
+.card-add-btn {
+    flex: 1;
+    margin-left: 8px;
+    height: 30px;
+    border: none;
+    border-radius: 8px;
+    background: #25d366;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+.card-add-btn:hover {
+    background: #1fb85a;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(37,211,102,0.3);
+}
+.card-add-btn:active {
+    transform: scale(0.95);
+}
+.card-add-btn.added {
+    background: var(--green);
+}
+
 /* --- Badges --- */
 .badge {
     display: inline-flex;
@@ -1003,6 +1094,7 @@ select.form-input {
     .info-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
     #whatsapp-float { width: 52px; height: 52px; bottom: 16px; right: 16px; }
     #whatsapp-float i { font-size: 24px; }
+    .card-qty-bar { opacity: 1; transform: translateY(0); }
 }
 
 @media (max-width: 480px) {

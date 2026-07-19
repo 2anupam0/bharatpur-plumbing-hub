@@ -60,6 +60,12 @@ def product_list(request):
     paginator = Paginator(products, 18)
     products_page = paginator.get_page(page)
 
+    related_products = []
+    if category:
+        related_products = Product.objects.filter(
+            category=category, is_active=True
+        ).select_related("category").prefetch_related("additional_images").order_by("-is_featured", "-created_at")[:4]
+
     context = {
         "products": products_page,
         "categories": categories,
@@ -67,6 +73,7 @@ def product_list(request):
         "search_query": search_query,
         "current_sort": sort,
         "total_count": paginator.count,
+        "related_products": related_products,
     }
     return render(request, "shop/product_list.html", context)
 
@@ -78,7 +85,7 @@ def product_detail(request, slug):
     )
     related_products = Product.objects.filter(
         category=product.category, is_active=True
-    ).select_related("category").prefetch_related("additional_images").exclude(pk=product.pk)[:4]
+    ).select_related("category").prefetch_related("additional_images").exclude(pk=product.pk)[:8]
 
     gallery_items = []
     if product.image:

@@ -90,10 +90,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
 });
 
-function addToCart(productId, btn) {
+function addToCart(productId, btn, quantity) {
     if (btn.classList.contains("added")) return;
+    var qty = parseInt(quantity) || 1;
     var formData = new FormData();
-    formData.append("quantity", 1);
+    formData.append("quantity", qty);
     var csrfToken = document.querySelector("[name=csrfmiddlewaretoken]");
     if (!csrfToken) {
         var cookies = document.cookie.split(";");
@@ -117,7 +118,8 @@ function addToCart(productId, btn) {
     .then(function(data) {
         if (data.success) {
             btn.classList.add("added");
-            btn.innerHTML = '<i class="fas fa-check"></i>';
+            var origText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-check"></i> Added!';
             var badge = document.getElementById("cart-count-badge");
             if (badge) {
                 badge.textContent = data.cart_count;
@@ -129,7 +131,7 @@ function addToCart(productId, btn) {
             }
             setTimeout(function() {
                 btn.classList.remove("added");
-                btn.innerHTML = '<i class="fas fa-cart-plus"></i>';
+                btn.innerHTML = origText;
             }, 1500);
         }
     })
@@ -140,7 +142,7 @@ function addToCart(productId, btn) {
         var input = document.createElement("input");
         input.type = "hidden";
         input.name = "quantity";
-        input.value = "1";
+        input.value = qty;
         form.appendChild(input);
         if (csrfToken) {
             var csrf = document.createElement("input");
@@ -152,4 +154,20 @@ function addToCart(productId, btn) {
         document.body.appendChild(form);
         form.submit();
     });
+}
+
+function cardQty(productId, delta, el) {
+    var ctrl = el.closest('.card-qty-ctrl');
+    var valEl = ctrl.querySelector('.card-qty-val');
+    var v = parseInt(valEl.textContent) + delta;
+    if (v < 1) v = 1;
+    valEl.textContent = v;
+}
+
+function cardAddToCart(productId, el) {
+    var ctrl = el.closest('.card-qty-bar');
+    var valEl = ctrl.querySelector('.card-qty-val');
+    var qty = parseInt(valEl.textContent) || 1;
+    addToCart(productId, el, qty);
+    valEl.textContent = '1';
 }
