@@ -1,8 +1,7 @@
 {
   "version": 2,
   "installCommand": "pip install -r requirements.txt",
-  "buildCommand": "python manage.py collectstatic --noinput",
-  "outputDirectory": "staticfiles",
+  "buildCommand": "SECRET_KEY=build-key DJANGO_SETTINGS_MODULE=plumbing_shop.settings python manage.py collectstatic --noinput",
   "framework": null,
   "builds": [
     {
