@@ -185,18 +185,18 @@
                     {% endif %}
                     {% endwith %}
                 </div>
-                <div class="product-info">
+                <div class="product-info" style="padding:12px;">
                     <h3 class="product-name" style="font-size:13px;">{{ rp.name }}</h3>
                     <span class="current" style="font-size:15px;">Rs {{ rp.price|floatformat:0|intcomma }}</span>
-                    {% if rp.is_in_stock %}
-                    <div class="card-qty-ctrl" data-pk="{{ rp.pk }}">
-                        <button type="button" onclick="event.preventDefault();event.stopPropagation();cardQty({{ rp.pk }}, -1, this)"><i class="fas fa-minus"></i></button>
-                        <span class="card-qty-val">1</span>
-                        <button type="button" onclick="event.preventDefault();event.stopPropagation();cardQty({{ rp.pk }}, 1, this)"><i class="fas fa-plus"></i></button>
-                    </div>
-                    {% endif %}
                 </div>
             </a>
+            {% if rp.is_in_stock %}
+            <div class="card-qty-ctrl" data-pk="{{ rp.pk }}">
+                <button type="button" onclick="cardQty({{ rp.pk }}, -1, this)"><i class="fas fa-minus"></i></button>
+                <span class="card-qty-val">1</span>
+                <button type="button" onclick="cardQty({{ rp.pk }}, 1, this)"><i class="fas fa-plus"></i></button>
+            </div>
+            {% endif %}
         </div>
         {% endfor %}
     </div>
