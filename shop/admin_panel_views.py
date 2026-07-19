@@ -200,17 +200,22 @@ def admin_product_add(request):
     if request.method == "POST":
         form = ProductForm(request.POST, request.FILES)
         if form.is_valid():
-            product = form.save()
-            for img in request.FILES.getlist('gallery_images'):
-                ProductImage.objects.create(product=product, image=img)
-            for url in request.POST.getlist('video_urls'):
-                url = url.strip()
-                if url:
-                    ProductVideo.objects.create(product=product, video_url=url)
-            for vf in request.FILES.getlist('video_files'):
-                ProductVideo.objects.create(product=product, video_file=vf)
-            messages.success(request, f"Product '{product.name}' added successfully.")
-            return redirect("admin_panel_products")
+            try:
+                product = form.save()
+                for img in request.FILES.getlist('gallery_images'):
+                    ProductImage.objects.create(product=product, image=img)
+                for url in request.POST.getlist('video_urls'):
+                    url = url.strip()
+                    if url:
+                        ProductVideo.objects.create(product=product, video_url=url)
+                for vf in request.FILES.getlist('video_files'):
+                    ProductVideo.objects.create(product=product, video_file=vf)
+                messages.success(request, f"Product '{product.name}' added successfully.")
+                return redirect("admin_panel_products")
+            except Exception as e:
+                messages.error(request, f"Error saving product: {str(e)}")
+        else:
+            messages.error(request, "Please correct the errors below.")
     else:
         form = ProductForm()
     return render(request, "admin_panel/product_form.html", {"form": form, "editing": False})
@@ -222,23 +227,28 @@ def admin_product_edit(request, pk):
     if request.method == "POST":
         form = ProductForm(request.POST, request.FILES, instance=product)
         if form.is_valid():
-            form.save()
-            for img in request.FILES.getlist('gallery_images'):
-                ProductImage.objects.create(product=product, image=img)
-            for url in request.POST.getlist('video_urls'):
-                url = url.strip()
-                if url:
-                    ProductVideo.objects.create(product=product, video_url=url)
-            for vf in request.FILES.getlist('video_files'):
-                ProductVideo.objects.create(product=product, video_file=vf)
-            delete_images = request.POST.getlist('delete_image')
-            for img_id in delete_images:
-                ProductImage.objects.filter(pk=img_id, product=product).delete()
-            delete_videos = request.POST.getlist('delete_video')
-            for vid_id in delete_videos:
-                ProductVideo.objects.filter(pk=vid_id, product=product).delete()
-            messages.success(request, f"Product '{product.name}' updated successfully.")
-            return redirect("admin_panel_products")
+            try:
+                form.save()
+                for img in request.FILES.getlist('gallery_images'):
+                    ProductImage.objects.create(product=product, image=img)
+                for url in request.POST.getlist('video_urls'):
+                    url = url.strip()
+                    if url:
+                        ProductVideo.objects.create(product=product, video_url=url)
+                for vf in request.FILES.getlist('video_files'):
+                    ProductVideo.objects.create(product=product, video_file=vf)
+                delete_images = request.POST.getlist('delete_image')
+                for img_id in delete_images:
+                    ProductImage.objects.filter(pk=img_id, product=product).delete()
+                delete_videos = request.POST.getlist('delete_video')
+                for vid_id in delete_videos:
+                    ProductVideo.objects.filter(pk=vid_id, product=product).delete()
+                messages.success(request, f"Product '{product.name}' updated successfully.")
+                return redirect("admin_panel_products")
+            except Exception as e:
+                messages.error(request, f"Error saving product: {str(e)}")
+        else:
+            messages.error(request, "Please correct the errors below.")
     else:
         form = ProductForm(instance=product)
     return render(request, "admin_panel/product_form.html", {
