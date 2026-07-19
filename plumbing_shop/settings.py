@@ -90,9 +90,9 @@ os.makedirs(MEDIA_ROOT, exist_ok=True)
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 CLOUDINARY_STORAGE = {
-    "CLOUD_NAME": os.environ.get("CLOUDINARY_CLOUD_NAME", ""),
-    "API_KEY": os.environ.get("CLOUDINARY_API_KEY", ""),
-    "API_SECRET": os.environ.get("CLOUDINARY_API_SECRET", ""),
+    "CLOUD_NAME": os.environ.get("CLOUDINARY_CLOUD_NAME", "vy7nlp1v"),
+    "API_KEY": os.environ.get("CLOUDINARY_API_KEY", "518759661657863"),
+    "API_SECRET": os.environ.get("CLOUDINARY_API_SECRET", "-MCRXq8UjxqccaVZ9UZykocp9zQ"),
 }
 
 STORAGES = {
@@ -100,13 +100,9 @@ STORAGES = {
         "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
     },
     "default": {
-        "BACKEND": "django.core.files.storage.FileSystemStorage",
+        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
     },
 }
-if os.environ.get("CLOUDINARY_CLOUD_NAME"):
-    STORAGES["default"] = {
-        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
-    }
 
 WHATSAPP_PHONE = "+9779800000000"
 
