@@ -3,7 +3,8 @@ __pycache__/
 *.pyc
 db.sqlite3
 media/
-staticfiles/
+staticfiles/manifest.json
+staticfiles/.staticfiles
 .git/
 .vscode/
 .idea/
