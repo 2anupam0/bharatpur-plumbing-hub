@@ -6,9 +6,9 @@ from shop.models import Category, Product, SiteSettings
 
 def slugify(name):
     s = name.lower().strip()
-    s = re.sub(r'[°º/\'"]', '', s)
-    s = re.sub(r'[\s]+', '-', s)
-    s = re.sub(r'-+', '-', s)
+    s = s.encode('ascii', 'ignore').decode('ascii')
+    s = re.sub(r'[^\w\s-]', '', s)
+    s = re.sub(r'[-\s]+', '-', s)
     s = s.strip('-')
     return s
 
