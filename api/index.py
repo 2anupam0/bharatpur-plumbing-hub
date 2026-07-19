@@ -10,3 +10,24 @@ from django.core.wsgi import get_wsgi_application
 
 application = get_wsgi_application()
 app = application
+
+_seeded = False
+
+def _check_and_seed():
+    global _seeded
+    if _seeded:
+        return
+    _seeded = True
+    try:
+        from shop.models import Product
+        if Product.objects.exists():
+            return
+        from django.core.management import call_command
+        call_command("seed_data")
+    except Exception:
+        pass
+
+try:
+    _check_and_seed()
+except Exception:
+    pass
