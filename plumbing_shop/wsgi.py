@@ -3,3 +3,6 @@ from django.core.wsgi import get_wsgi_application
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "plumbing_shop.settings")
 application = get_wsgi_application()
+
+# Vercel compatibility
+app = application
