@@ -263,3 +263,27 @@ def order_confirmation(request, order_number):
 def order_invoice(request, order_number):
     order = get_object_or_404(Order, order_number=order_number)
     return render(request, "shop/invoice.html", {"order": order})
+
+
+def setup_database(request):
+    import os
+    from django.http import HttpResponse
+    from django.core.management import call_command
+
+    setup_key = os.environ.get("SETUP_KEY", "arun-setup-2026")
+    if request.GET.get("key") != setup_key:
+        return HttpResponse("Unauthorized", status=403)
+
+    output = []
+
+    try:
+        call_command("migrate", "--noinput", stdout=output)
+    except Exception as e:
+        output.append(f"Migration error: {e}")
+
+    try:
+        call_command("seed_data", stdout=output)
+    except Exception as e:
+        output.append(f"Seed error: {e}")
+
+    return HttpResponse("<pre>" + "\n".join(output) + "</pre>")
