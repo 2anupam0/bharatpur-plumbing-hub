@@ -267,6 +267,7 @@ def order_invoice(request, order_number):
 
 def setup_database(request):
     import os
+    import io
     from django.http import HttpResponse
     from django.core.management import call_command
 
@@ -277,12 +278,16 @@ def setup_database(request):
     output = []
 
     try:
-        call_command("migrate", "--noinput", stdout=output)
+        stdout = io.StringIO()
+        call_command("migrate", "--noinput", stdout=stdout)
+        output.append(stdout.getvalue())
     except Exception as e:
         output.append(f"Migration error: {e}")
 
     try:
-        call_command("seed_data", stdout=output)
+        stdout = io.StringIO()
+        call_command("seed_data", stdout=stdout)
+        output.append(stdout.getvalue())
     except Exception as e:
         output.append(f"Seed error: {e}")
 
