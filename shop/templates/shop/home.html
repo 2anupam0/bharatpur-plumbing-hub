@@ -103,11 +103,6 @@
         {% for product in featured_products %}
         <div class="product-card animate-in">
             {% if product.is_in_stock %}
-            <div class="card-qty-ctrl show" data-pk="{{ product.pk }}">
-                <button type="button" onclick="cardQty({{ product.pk }}, -1, this)"><i class="fas fa-minus" style="font-size:9px;"></i></button>
-                <span class="card-qty-val">1</span>
-                <button type="button" onclick="cardQty({{ product.pk }}, 1, this)"><i class="fas fa-plus" style="font-size:9px;"></i></button>
-            </div>
             <button type="button" class="cart-icon-btn" onclick="event.preventDefault();event.stopPropagation();cardAddToCart({{ product.pk }}, this)" title="Add to Cart">
                 <i class="fas fa-cart-plus"></i>
             </button>
@@ -139,6 +134,13 @@
                         <span class="original">Rs {{ product.original_price|floatformat:0|intcomma }}</span>
                         {% endif %}
                     </div>
+                    {% if product.is_in_stock %}
+                    <div class="card-qty-ctrl" data-pk="{{ product.pk }}">
+                        <button type="button" onclick="event.preventDefault();event.stopPropagation();cardQty({{ product.pk }}, -1, this)"><i class="fas fa-minus"></i></button>
+                        <span class="card-qty-val">1</span>
+                        <button type="button" onclick="event.preventDefault();event.stopPropagation();cardQty({{ product.pk }}, 1, this)"><i class="fas fa-plus"></i></button>
+                    </div>
+                    {% endif %}
                     <div class="product-meta">
                         <span class="stock-badge {% if product.is_in_stock %}in-stock{% else %}out-of-stock{% endif %}">
                             {% if product.is_in_stock %}In Stock{% else %}Out of Stock{% endif %}
