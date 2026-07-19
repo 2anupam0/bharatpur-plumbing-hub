@@ -118,8 +118,8 @@ function addToCart(productId, btn, quantity) {
     .then(function(data) {
         if (data.success) {
             btn.classList.add("added");
-            var origText = btn.innerHTML;
-            btn.innerHTML = '<i class="fas fa-check"></i> Added!';
+            var origHTML = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-check"></i>';
             var badge = document.getElementById("cart-count-badge");
             if (badge) {
                 badge.textContent = data.cart_count;
@@ -131,7 +131,7 @@ function addToCart(productId, btn, quantity) {
             }
             setTimeout(function() {
                 btn.classList.remove("added");
-                btn.innerHTML = origText;
+                btn.innerHTML = origHTML;
             }, 1500);
         }
     })
@@ -165,9 +165,12 @@ function cardQty(productId, delta, el) {
 }
 
 function cardAddToCart(productId, el) {
-    var ctrl = el.closest('.card-qty-bar');
-    var valEl = ctrl.querySelector('.card-qty-val');
-    var qty = parseInt(valEl.textContent) || 1;
+    var card = el.closest('.product-card');
+    var ctrl = card ? card.querySelector('.card-qty-ctrl') : null;
+    var qty = 1;
+    if (ctrl) {
+        var valEl = ctrl.querySelector('.card-qty-val');
+        qty = parseInt(valEl.textContent) || 1;
+    }
     addToCart(productId, el, qty);
-    valEl.textContent = '1';
 }
