@@ -117,8 +117,8 @@ def owner_product_add(request):
             for img in request.FILES.getlist('gallery_images'):
                 try:
                     ProductImage.objects.create(product=product, image=img)
-                except Exception:
-                    pass
+                except Exception as e:
+                    messages.warning(request, f"Could not upload image '{img.name}': {e}")
             for url in request.POST.getlist('video_urls'):
                 url = url.strip()
                 if url:
@@ -126,8 +126,8 @@ def owner_product_add(request):
             for vf in request.FILES.getlist('video_files'):
                 try:
                     ProductVideo.objects.create(product=product, video_file=vf)
-                except Exception:
-                    pass
+                except Exception as e:
+                    messages.warning(request, f"Could not upload video '{vf.name}': {e}")
             messages.success(request, f"Product '{product.name}' added successfully.")
             return redirect("owner_products")
     else:
@@ -151,8 +151,8 @@ def owner_product_edit(request, pk):
             for img in request.FILES.getlist('gallery_images'):
                 try:
                     ProductImage.objects.create(product=product, image=img)
-                except Exception:
-                    pass
+                except Exception as e:
+                    messages.warning(request, f"Could not upload image '{img.name}': {e}")
             for url in request.POST.getlist('video_urls'):
                 url = url.strip()
                 if url:
@@ -160,8 +160,8 @@ def owner_product_edit(request, pk):
             for vf in request.FILES.getlist('video_files'):
                 try:
                     ProductVideo.objects.create(product=product, video_file=vf)
-                except Exception:
-                    pass
+                except Exception as e:
+                    messages.warning(request, f"Could not upload video '{vf.name}': {e}")
             delete_images = request.POST.getlist('delete_image')
             for img_id in delete_images:
                 ProductImage.objects.filter(pk=img_id, product=product).delete()

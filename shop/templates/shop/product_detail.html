@@ -27,9 +27,16 @@
                 <div id="gallery-main" style="position:relative;width:100%;min-height:400px;display:flex;align-items:center;justify-content:center;overflow:hidden;">
                     {% if product.image %}
                     <img id="gallery-active" data-type="image" data-src="{{ product.image.url }}" src="{{ product.image.url }}" alt="{{ product.name }}" style="width:100%;height:400px;object-fit:contain;display:block;transition:opacity 0.3s;">
-                    {% elif product.videos.all %}
-                    {% with vid=product.videos.all.0 %}
-                    <iframe id="gallery-active" data-type="video" data-src="{{ vid.get_embed_url }}" src="{{ vid.get_embed_url }}" style="width:100%;height:400px;border:none;" allowfullscreen></iframe>
+                    {% elif gallery_items %}
+                    {% with item=gallery_items.0 %}
+                        {% if item.type == 'video' %}
+                        <iframe id="gallery-active" data-type="video" data-src="{{ item.embed_url }}" src="{{ item.embed_url }}" style="width:100%;height:400px;border:none;" allowfullscreen></iframe>
+                        {% elif item.type == 'local_video' %}
+                        <video id="gallery-active" data-type="local_video" data-src="{{ item.url }}" controls playsinline style="width:100%;height:400px;object-fit:contain;background:#000;display:block;">
+                            <source src="{{ item.url }}" type="video/mp4">
+                            Your browser does not support video playback.
+                        </video>
+                        {% endif %}
                     {% endwith %}
                     {% else %}
                     <div class="text-center py-16">

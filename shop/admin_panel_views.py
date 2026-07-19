@@ -203,13 +203,19 @@ def admin_product_add(request):
             try:
                 product = form.save()
                 for img in request.FILES.getlist('gallery_images'):
-                    ProductImage.objects.create(product=product, image=img)
+                    try:
+                        ProductImage.objects.create(product=product, image=img)
+                    except Exception as e:
+                        messages.warning(request, f"Could not upload image '{img.name}': {e}")
                 for url in request.POST.getlist('video_urls'):
                     url = url.strip()
                     if url:
                         ProductVideo.objects.create(product=product, video_url=url)
                 for vf in request.FILES.getlist('video_files'):
-                    ProductVideo.objects.create(product=product, video_file=vf)
+                    try:
+                        ProductVideo.objects.create(product=product, video_file=vf)
+                    except Exception as e:
+                        messages.warning(request, f"Could not upload video '{vf.name}': {e}")
                 messages.success(request, f"Product '{product.name}' added successfully.")
                 return redirect("admin_panel_products")
             except Exception as e:
@@ -230,13 +236,19 @@ def admin_product_edit(request, pk):
             try:
                 form.save()
                 for img in request.FILES.getlist('gallery_images'):
-                    ProductImage.objects.create(product=product, image=img)
+                    try:
+                        ProductImage.objects.create(product=product, image=img)
+                    except Exception as e:
+                        messages.warning(request, f"Could not upload image '{img.name}': {e}")
                 for url in request.POST.getlist('video_urls'):
                     url = url.strip()
                     if url:
                         ProductVideo.objects.create(product=product, video_url=url)
                 for vf in request.FILES.getlist('video_files'):
-                    ProductVideo.objects.create(product=product, video_file=vf)
+                    try:
+                        ProductVideo.objects.create(product=product, video_file=vf)
+                    except Exception as e:
+                        messages.warning(request, f"Could not upload video '{vf.name}': {e}")
                 delete_images = request.POST.getlist('delete_image')
                 for img_id in delete_images:
                     ProductImage.objects.filter(pk=img_id, product=product).delete()

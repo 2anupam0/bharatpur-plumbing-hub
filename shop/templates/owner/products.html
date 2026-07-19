@@ -96,7 +96,10 @@
                         <td class="text-right">
                             <div class="flex items-center justify-end gap-2">
                                 <a href="{% url 'owner_product_edit' product.pk %}" class="ow-btn-icon" title="Edit"><i class="fas fa-pen text-xs"></i></a>
-                                <a href="{% url 'owner_product_delete' product.pk %}" class="ow-btn-icon ow-btn-icon-red" title="Delete"><i class="fas fa-trash text-xs"></i></a>
+                                <form method="POST" action="{% url 'owner_product_delete' product.pk %}" class="inline" onsubmit="return confirm('Delete product \'{{ product.name }}\'? This cannot be undone.')">
+                                    {% csrf_token %}
+                                    <button type="submit" class="ow-btn-icon ow-btn-icon-red" title="Delete"><i class="fas fa-trash text-xs"></i></button>
+                                </form>
                             </div>
                         </td>
                     </tr>
