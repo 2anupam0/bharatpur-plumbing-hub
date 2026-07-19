@@ -1,4 +1,4 @@
-from django.contrib import admin
+from django.contrib import admin, messages
 from django.utils.html import format_html, mark_safe
 from django.urls import reverse
 from .models import Category, Product, ContactInquiry, SiteSettings, Order, OrderItem, Bill, BillItem
@@ -298,7 +298,10 @@ class OrderAdmin(admin.ModelAdmin):
     def save_model(self, request, obj, form, change):
         if not change and not obj.created_by:
             obj.created_by = request.user
-        super().save_model(request, obj, form, change)
+        try:
+            super().save_model(request, obj, form, change)
+        except Exception as e:
+            messages.error(request, f"Error saving: {e}")
 
 
 @admin.register(SiteSettings)

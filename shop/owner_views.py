@@ -109,15 +109,25 @@ def owner_product_add(request):
     if request.method == "POST":
         form = ProductForm(request.POST, request.FILES)
         if form.is_valid():
-            product = form.save()
+            try:
+                product = form.save()
+            except Exception as e:
+                messages.error(request, f"Error saving product: {e}")
+                return render(request, "owner/product_form.html", {"form": form, "editing": False})
             for img in request.FILES.getlist('gallery_images'):
-                ProductImage.objects.create(product=product, image=img)
+                try:
+                    ProductImage.objects.create(product=product, image=img)
+                except Exception:
+                    pass
             for url in request.POST.getlist('video_urls'):
                 url = url.strip()
                 if url:
                     ProductVideo.objects.create(product=product, video_url=url)
             for vf in request.FILES.getlist('video_files'):
-                ProductVideo.objects.create(product=product, video_file=vf)
+                try:
+                    ProductVideo.objects.create(product=product, video_file=vf)
+                except Exception:
+                    pass
             messages.success(request, f"Product '{product.name}' added successfully.")
             return redirect("owner_products")
     else:
@@ -131,15 +141,27 @@ def owner_product_edit(request, pk):
     if request.method == "POST":
         form = ProductForm(request.POST, request.FILES, instance=product)
         if form.is_valid():
-            form.save()
+            try:
+                form.save()
+            except Exception as e:
+                messages.error(request, f"Error saving product: {e}")
+                return render(request, "owner/product_form.html", {
+                    "form": form, "editing": True, "product": product,
+                })
             for img in request.FILES.getlist('gallery_images'):
-                ProductImage.objects.create(product=product, image=img)
+                try:
+                    ProductImage.objects.create(product=product, image=img)
+                except Exception:
+                    pass
             for url in request.POST.getlist('video_urls'):
                 url = url.strip()
                 if url:
                     ProductVideo.objects.create(product=product, video_url=url)
             for vf in request.FILES.getlist('video_files'):
-                ProductVideo.objects.create(product=product, video_file=vf)
+                try:
+                    ProductVideo.objects.create(product=product, video_file=vf)
+                except Exception:
+                    pass
             delete_images = request.POST.getlist('delete_image')
             for img_id in delete_images:
                 ProductImage.objects.filter(pk=img_id, product=product).delete()
@@ -311,7 +333,11 @@ def owner_bill_detail(request, pk):
             messages.success(request, f"Bill {bill.bill_number} cancelled. Stock restored.")
         return redirect("owner_bill_detail", pk=pk)
 
-    qr_images = _generate_payment_qr(bill)
+    qr_images = {}
+    try:
+        qr_images = _generate_payment_qr(bill)
+    except Exception:
+        pass
     return render(request, "owner/bill_detail.html", {
         "bill": bill,
         "qr_images": qr_images,
@@ -321,7 +347,11 @@ def owner_bill_detail(request, pk):
 @owner_login_required
 def owner_bill_print(request, pk):
     bill = get_object_or_404(Bill, pk=pk)
-    qr_images = _generate_payment_qr(bill)
+    qr_images = {}
+    try:
+        qr_images = _generate_payment_qr(bill)
+    except Exception:
+        pass
     return render(request, "owner/bill_print.html", {
         "bill": bill,
         "qr_images": qr_images,
