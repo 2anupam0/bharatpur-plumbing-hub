@@ -182,7 +182,7 @@ class ContactInquiry(models.Model):
 
 
 class SiteSettings(models.Model):
-    shop_name = models.CharField(max_length=100, default="WONTA SUPPLIERS")
+    shop_name = models.CharField(max_length=100, default="ARUN Suppliers")
     shop_tagline = models.CharField(max_length=255, default="All Plumbing & Hardware Materials in Bharatpur")
     shop_phone = models.CharField(max_length=20, default="+9779800000000")
     shop_email = models.EmailField(default="info@bharatpurplumbing.com")

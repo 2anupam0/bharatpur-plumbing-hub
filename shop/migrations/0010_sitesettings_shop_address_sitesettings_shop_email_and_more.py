@@ -23,7 +23,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='sitesettings',
             name='shop_name',
-            field=models.CharField(default='WONTA SUPPLIERS', max_length=100),
+            field=models.CharField(default='ARUN Suppliers', max_length=100),
         ),
         migrations.AddField(
             model_name='sitesettings',
