@@ -19,8 +19,8 @@ def _check_and_seed():
         return
     _seeded = True
     try:
-        from shop.models import Product
-        if Product.objects.exists():
+        from shop.models import Category
+        if Category.objects.filter(name="CPVC Pipes").exists():
             return
         from django.core.management import call_command
         call_command("seed_data")
