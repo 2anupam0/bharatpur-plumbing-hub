@@ -14,7 +14,7 @@ def home(request):
     )
     featured_products = Product.objects.filter(
         is_active=True, is_featured=True
-    )[:8]
+    ).select_related("category").prefetch_related("additional_images")[:8]
     site_settings = SiteSettings.load()
 
     context = {
@@ -26,7 +26,7 @@ def home(request):
 
 
 def product_list(request):
-    products = Product.objects.select_related("category").filter(is_active=True)
+    products = Product.objects.select_related("category").prefetch_related("additional_images").filter(is_active=True)
     categories = Category.objects.filter(is_active=True).annotate(
         product_count=Count("products", filter=Q(products__is_active=True))
     )
@@ -72,10 +72,13 @@ def product_list(request):
 
 
 def product_detail(request, slug):
-    product = get_object_or_404(Product, slug=slug, is_active=True)
+    product = get_object_or_404(
+        Product.objects.select_related("category").prefetch_related("additional_images", "videos"),
+        slug=slug, is_active=True,
+    )
     related_products = Product.objects.filter(
         category=product.category, is_active=True
-    ).exclude(pk=product.pk)[:4]
+    ).select_related("category").prefetch_related("additional_images").exclude(pk=product.pk)[:4]
 
     gallery_items = []
     if product.image:
@@ -256,12 +259,12 @@ def checkout(request):
 
 
 def order_confirmation(request, order_number):
-    order = get_object_or_404(Order, order_number=order_number)
+    order = get_object_or_404(Order.objects.prefetch_related("items"), order_number=order_number)
     return render(request, "shop/order_confirmation.html", {"order": order})
 
 
 def order_invoice(request, order_number):
-    order = get_object_or_404(Order, order_number=order_number)
+    order = get_object_or_404(Order.objects.prefetch_related("items"), order_number=order_number)
     return render(request, "shop/invoice.html", {"order": order})
 
 

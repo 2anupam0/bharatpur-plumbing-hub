@@ -1,5 +1,5 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "installCommand": "pip install -r requirements.txt",
-  "buildCommand": "SECRET_KEY=build-temp-key python manage.py collectstatic --noinput"
+  "installCommand": "pip install -r requirements.txt && npm install tailwindcss@3",
+  "buildCommand": "npx tailwindcss -i shop/static/shop/css/input.css -o shop/static/shop/css/tailwind.min.css --minify && SECRET_KEY=build-temp-key python manage.py collectstatic --noinput"
 }

@@ -70,7 +70,7 @@ def owner_dashboard(request):
 
 @owner_login_required
 def owner_products(request):
-    products = Product.objects.select_related("category").all()
+    products = Product.objects.select_related("category").prefetch_related("additional_images").all()
     search = request.GET.get("q", "").strip()
     category_id = request.GET.get("category", "")
     status = request.GET.get("status", "")
@@ -190,7 +190,7 @@ def owner_product_delete(request, pk):
 
 @owner_login_required
 def owner_orders(request):
-    orders = Order.objects.all()
+    orders = Order.objects.prefetch_related("items").all()
     status_filter = request.GET.get("status", "")
     if status_filter:
         orders = orders.filter(order_status=status_filter)
@@ -208,7 +208,7 @@ def owner_orders(request):
 
 @owner_login_required
 def owner_order_detail(request, pk):
-    order = get_object_or_404(Order, pk=pk)
+    order = get_object_or_404(Order.objects.prefetch_related("items__product"), pk=pk)
     if request.method == "POST":
         new_status = request.POST.get("order_status")
         new_payment = request.POST.get("payment_status")
@@ -224,7 +224,7 @@ def owner_order_detail(request, pk):
 
 @owner_login_required
 def owner_bills(request):
-    bills = Bill.objects.all()
+    bills = Bill.objects.prefetch_related("items").all()
     status_filter = request.GET.get("status", "")
     if status_filter:
         bills = bills.filter(status=status_filter)
@@ -312,7 +312,7 @@ def owner_bill_create(request):
 
 @owner_login_required
 def owner_bill_detail(request, pk):
-    bill = get_object_or_404(Bill, pk=pk)
+    bill = get_object_or_404(Bill.objects.prefetch_related("items__product"), pk=pk)
     if request.method == "POST":
         action = request.POST.get("action")
         if action == "confirm":
@@ -346,7 +346,7 @@ def owner_bill_detail(request, pk):
 
 @owner_login_required
 def owner_bill_print(request, pk):
-    bill = get_object_or_404(Bill, pk=pk)
+    bill = get_object_or_404(Bill.objects.prefetch_related("items__product"), pk=pk)
     qr_images = {}
     try:
         qr_images = _generate_payment_qr(bill)
