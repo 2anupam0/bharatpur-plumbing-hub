@@ -4,7 +4,8 @@ __pycache__/
 db.sqlite3
 media/products/*
 !media/products/.gitkeep
-staticfiles/
+staticfiles/manifest.json
+staticfiles/.staticfiles
 *.log
 .env
 .DS_Store
