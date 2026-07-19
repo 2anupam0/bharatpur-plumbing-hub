@@ -169,7 +169,7 @@
         {% for rp in related_products %}
         <div class="product-card">
             {% if rp.is_in_stock %}
-            <button type="button" class="cart-icon-btn" onclick="event.preventDefault();event.stopPropagation();cardAddToCart({{ rp.pk }}, this)" title="Add to Cart">
+            <button type="button" class="cart-icon-btn" onclick="event.preventDefault();event.stopPropagation();addToCart({{ rp.pk }}, this)" title="Add to Cart">
                 <i class="fas fa-cart-plus"></i>
             </button>
             {% endif %}
@@ -190,13 +190,6 @@
                     <span class="current" style="font-size:15px;">Rs {{ rp.price|floatformat:0|intcomma }}</span>
                 </div>
             </a>
-            {% if rp.is_in_stock %}
-            <div class="card-qty-ctrl" data-pk="{{ rp.pk }}">
-                <button type="button" onclick="cardQty({{ rp.pk }}, -1, this)"><i class="fas fa-minus"></i></button>
-                <span class="card-qty-val">1</span>
-                <button type="button" onclick="cardQty({{ rp.pk }}, 1, this)"><i class="fas fa-plus"></i></button>
-            </div>
-            {% endif %}
         </div>
         {% endfor %}
     </div>

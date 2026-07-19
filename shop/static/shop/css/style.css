@@ -312,51 +312,6 @@ body {
     color: #fff;
 }
 
-/* --- Card Quantity Controls --- */
-.card-qty-ctrl {
-    display: flex;
-    align-items: center;
-    border-radius: 10px;
-    overflow: hidden;
-    background: var(--gray-100);
-    border: 1px solid var(--gray-200);
-    width: fit-content;
-    margin: 0 12px 12px;
-}
-.card-qty-ctrl button {
-    width: 32px;
-    height: 32px;
-    border: none;
-    background: transparent;
-    color: var(--gray-600);
-    font-size: 13px;
-    font-weight: 700;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.15s ease;
-}
-.card-qty-ctrl button:hover {
-    background: var(--primary);
-    color: #fff;
-}
-.card-qty-ctrl button:active {
-    transform: scale(0.9);
-}
-.card-qty-ctrl .card-qty-val {
-    width: 32px;
-    text-align: center;
-    font-size: 14px;
-    font-weight: 700;
-    color: var(--gray-800);
-    border-left: 1px solid var(--gray-300);
-    border-right: 1px solid var(--gray-300);
-    line-height: 32px;
-    user-select: none;
-    background: var(--white);
-}
-
 /* --- Badges --- */
 .badge {
     display: inline-flex;
