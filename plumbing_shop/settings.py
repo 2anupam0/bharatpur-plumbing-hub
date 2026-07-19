@@ -11,7 +11,8 @@ SECRET_KEY = os.environ.get(
 DEBUG = os.environ.get("DJANGO_DEBUG", "False").lower() in ("true", "1", "yes")
 
 ALLOWED_HOSTS = os.environ.get(
-    "DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1,testserver,bharatpur-plumbing-hub.onrender.com"
+    "DJANGO_ALLOWED_HOSTS",
+    "localhost,127.0.0.1,testserver,bharatpur-plumbing-hub.onrender.com,bharatpur-plumbing-hub.vercel.app,.vercel.app"
 ).split(",")
 
 INSTALLED_APPS = [
@@ -91,25 +92,24 @@ CLOUDINARY_STORAGE = {
     "API_SECRET": os.environ.get("CLOUDINARY_API_SECRET", ""),
 }
 
-if not DEBUG:
-    STORAGES = {
-        "staticfiles": {
-            "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
-        },
-        "default": {
-            "BACKEND": "django.core.files.storage.FileSystemStorage",
-        },
+STORAGES = {
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage" if not DEBUG else "django.contrib.staticfiles.storage.StaticFilesStorage",
+    },
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+}
+if os.environ.get("CLOUDINARY_CLOUD_NAME"):
+    STORAGES["default"] = {
+        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
     }
-    if os.environ.get("CLOUDINARY_CLOUD_NAME"):
-        STORAGES["default"] = {
-            "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
-        }
 
 WHATSAPP_PHONE = "+9779800000000"
 
-SITE_NAME = "WONTA SUPPLIERS"
+SITE_NAME = "ARUN Suppliers"
 SITE_TAGLINE = "All Plumbing & Hardware Materials in Bharatpur"
 SITE_PHONE = "+9779800000000"
-SITE_EMAIL = "info@bharatpurplumbing.com"
+SITE_EMAIL = "info@arunplumbing.com"
 SITE_ADDRESS = "Bharatpur 44200, Nepal"
 SITE_OPENING_HOURS = "Sun-Fri: 8:00 AM - 7:00 PM | Sat: 9:00 AM - 5:00 PM"
