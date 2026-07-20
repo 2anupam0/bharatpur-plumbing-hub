@@ -67,6 +67,11 @@
             <div class="product-grid">
                 {% for product in products %}
                 <div class="product-card animate-in">
+                    {% if product.is_in_stock %}
+                    <button type="button" class="cart-icon-btn" onclick="event.preventDefault();event.stopPropagation();addToCart({{ product.pk }}, this)" title="Add to Cart">
+                        <i class="fas fa-cart-plus"></i>
+                    </button>
+                    {% endif %}
                     <a href="{% url 'product_detail' product.slug %}" class="product-card-link">
                         <div class="product-image">
                             {% with first_img=product.additional_images.all.0 %}
@@ -102,18 +107,6 @@
                             </div>
                         </div>
                     </a>
-                    {% if product.is_in_stock %}
-                    <div class="card-bottom-bar">
-                        <div class="card-qty-ctrl">
-                            <button type="button" onclick="cardQty({{ product.pk }}, -1, this)"><i class="fas fa-minus"></i></button>
-                            <span class="card-qty-val">1</span>
-                            <button type="button" onclick="cardQty({{ product.pk }}, 1, this)"><i class="fas fa-plus"></i></button>
-                        </div>
-                        <button type="button" class="card-cart-btn" onclick="cardCartAdd({{ product.pk }}, this)" title="Add to Cart">
-                            <i class="fas fa-cart-plus"></i>
-                        </button>
-                    </div>
-                    {% endif %}
                 </div>
                 {% endfor %}
             </div>
@@ -166,6 +159,11 @@
     <div class="product-grid">
         {% for rp in related_products %}
         <div class="product-card animate-in">
+            {% if rp.is_in_stock %}
+            <button type="button" class="cart-icon-btn" onclick="event.preventDefault();event.stopPropagation();addToCart({{ rp.pk }}, this)" title="Add to Cart">
+                <i class="fas fa-cart-plus"></i>
+            </button>
+            {% endif %}
             <a href="{% url 'product_detail' rp.slug %}" class="product-card-link">
                 <div class="product-image">
                     {% with first_img=rp.additional_images.all.0 %}
@@ -190,18 +188,6 @@
                     </div>
                 </div>
             </a>
-            {% if rp.is_in_stock %}
-            <div class="card-bottom-bar">
-                <div class="card-qty-ctrl">
-                    <button type="button" onclick="cardQty({{ rp.pk }}, -1, this)"><i class="fas fa-minus"></i></button>
-                    <span class="card-qty-val">1</span>
-                    <button type="button" onclick="cardQty({{ rp.pk }}, 1, this)"><i class="fas fa-plus"></i></button>
-                </div>
-                <button type="button" class="card-cart-btn" onclick="cardCartAdd({{ rp.pk }}, this)" title="Add to Cart">
-                    <i class="fas fa-cart-plus"></i>
-                </button>
-            </div>
-            {% endif %}
         </div>
         {% endfor %}
     </div>
