@@ -155,3 +155,18 @@ function addToCart(productId, btn, quantity) {
         form.submit();
     });
 }
+
+function cardQty(productId, delta, el) {
+    var ctrl = el.closest('.card-qty-ctrl');
+    var valEl = ctrl.querySelector('.card-qty-val');
+    var v = parseInt(valEl.textContent) + delta;
+    if (v < 1) v = 1;
+    valEl.textContent = v;
+}
+
+function cardCartAdd(productId, el) {
+    var card = el.closest('.product-card');
+    var valEl = card.querySelector('.card-qty-val');
+    var qty = valEl ? parseInt(valEl.textContent) || 1 : 1;
+    addToCart(productId, el, qty);
+}
